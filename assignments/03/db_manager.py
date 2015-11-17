@@ -1,4 +1,5 @@
-__author__ = 'michaelhundt'
+#A3_3 solution
+__author__ = 'Bassil Khatib and Michael Hundt'
 
 import pymysql
 import datetime

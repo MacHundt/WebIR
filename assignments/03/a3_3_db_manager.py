@@ -74,9 +74,11 @@ def store_to_db(cursor, table_name, *values):
     #TODO get the field names to make it more generic ... they are in a different order #see get_first_record()
     # Create a new record
     sql = "INSERT INTO "+str(table_name)+"(title, url, content, creation_date ) VALUES (%s, %s, %s, %s)"
+    i = 0
     for val in values:
         cursor.execute(sql, (val[0], val[1], val[2], val[3]))
-
+        i += 1
+    print("...inserted "+str(i)+" records")
 
 def connect_to_db():
     '''

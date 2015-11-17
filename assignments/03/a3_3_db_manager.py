@@ -71,7 +71,7 @@ def store_to_db(cursor, table_name, *values):
     :param values:
     :return: void
     '''
-    #TODO get the field names to make it more generic
+    #TODO get the field names to make it more generic ... they are in a different order #see get_first_record()
     # Create a new record
     sql = "INSERT INTO "+str(table_name)+"(title, url, content, creation_date ) VALUES (%s, %s, %s, %s)"
     for val in values:

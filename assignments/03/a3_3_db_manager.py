@@ -51,7 +51,7 @@ def get_values():
     :return: a list of values
     '''
     ts = datetime.datetime.utcnow()
-    print(ts)
+    #print(ts)
     fp = open("test_data.txt")
     header = fp.readline()
     values = list()
@@ -91,8 +91,10 @@ def connect_to_db():
                              db='scraping',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
+        print("...connected to mysql db")
     except Exception as e:
         print("Connection Error")
+        print(e.args[1])
 
     return connection
 

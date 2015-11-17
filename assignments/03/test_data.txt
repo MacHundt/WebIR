@@ -1,0 +1,3 @@
+title;; url;; content
+Test1;; http://www.test/url/;; This is some content text to be stored!
+Test2;; http://www.test/url/;; This is also some content text to be stored!

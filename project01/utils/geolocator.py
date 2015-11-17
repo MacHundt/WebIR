@@ -1,5 +1,8 @@
 # coding: utf-8
-"""The file used for the geo-locations."""
+"""
+The file used for the geo-locations.
+Uses geoip2 (to install: 'pip install geoip2')
+"""
 
 import geoip2.database
 

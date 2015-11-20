@@ -73,8 +73,8 @@ def main():
     db_manager.generate_test_data(15)
     try:
         connection = db_manager.connect_to_db()
-    except:
-        print("Could not connect to DB")
+    except Exception as e:
+        print(e.__traceback__)
 
     t1 = storage_thread(connection)
     t1.start()

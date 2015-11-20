@@ -1,3 +1,16 @@
-title;;url;;content
-Test1;;http://www.test/url/;;This is some content text to be stored!
-Test2;;http://www.test/url/;;This is also some content text to be stored!
+title;;url;;content;;creation_date
+Test0;;http://www.test/url/;;Yam yam .. text to be stored!
+Test1;;http://www.test/url/;;Yam yam .. text to be stored!
+Test2;;http://www.test/url/;;Yam yam .. text to be stored!
+Test3;;http://www.test/url/;;Yam yam .. text to be stored!
+Test4;;http://www.test/url/;;Yam yam .. text to be stored!
+Test5;;http://www.test/url/;;Yam yam .. text to be stored!
+Test6;;http://www.test/url/;;Yam yam .. text to be stored!
+Test7;;http://www.test/url/;;Yam yam .. text to be stored!
+Test8;;http://www.test/url/;;Yam yam .. text to be stored!
+Test9;;http://www.test/url/;;Yam yam .. text to be stored!
+Test10;;http://www.test/url/;;Yam yam .. text to be stored!
+Test11;;http://www.test/url/;;Yam yam .. text to be stored!
+Test12;;http://www.test/url/;;Yam yam .. text to be stored!
+Test13;;http://www.test/url/;;Yam yam .. text to be stored!
+Test14;;http://www.test/url/;;Yam yam .. text to be stored!

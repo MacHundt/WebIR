@@ -6,13 +6,13 @@ import datetime
 
 
 def main():
-    
-    connection = connect_to_db()
 
+    generate_test_data(10)
+    connection = connect_to_db()
     store_to_db(connection.cursor(), "pages", *get_values())
     connection.commit()
 
-    read_first_record(connection.cursor())
+    #read_first_record(connection.cursor())
 
     db_content = read_db(connection.cursor())
     for record in db_content:
@@ -20,6 +20,14 @@ def main():
 
     connection.close()
 
+def generate_test_data(records=100):
+    fp = open("test_data.txt",mode="w")
+    #wirte header
+    fp.write("title;;url;;content;;creation_date\n")
+    for i in range(records):
+        dummy = 'Test{0};;http://www.test/url/;;Yam yam .. text to be stored!\n'.format(i)
+        fp.write(dummy)
+    fp.close()
 
 def read_first_record(cursor):
     '''
@@ -78,7 +86,11 @@ def store_to_db(cursor, table_name, *values):
     for val in values:
         cursor.execute(sql, (val[0], val[1], val[2], val[3]))
         i += 1
-    print("...inserted "+str(i)+" records")
+    if i == 1:
+        print("...inserted one record to db")
+    else:
+        print("...inserted "+str(i)+" records to db")
+
 
 def connect_to_db():
     '''
@@ -99,6 +111,7 @@ def connect_to_db():
         print(e.args[1])
 
     return connection
+
 
 if __name__ == '__main__':
     main()

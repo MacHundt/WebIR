@@ -5,10 +5,11 @@ Uses geoip2 (to install: 'pip install geoip2')
 """
 
 import geoip2.database
+import os
 
 __author__ = 'wikipedia_project_group'
 
-reader = geoip2.database.Reader('data/GeoLite2-City.mmdb')
+reader = geoip2.database.Reader(os.path.abspath("../data/GeoLite2-City.mmdb"))
 
 
 def retrieve_geo_location(ip_address):
@@ -18,5 +19,7 @@ def retrieve_geo_location(ip_address):
     :return: The geo-location
     """
     global reader
-
-    return reader.city(ip_address)
+    try:
+        return reader.city(ip_address)
+    except Exception as e:
+        return "None"

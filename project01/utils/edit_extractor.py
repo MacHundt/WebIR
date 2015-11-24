@@ -81,8 +81,8 @@ def main():
                     has_previous = False
                     reset()
                     page.write_to_XML_file(path_to_learning_data)
+                    print("running time for "+page.title+": "+str(round(page_end_time-page_start_time, 2))+" sec.\n")
                     continue
-                print("running time for "+page.title+": "+str(round(page_end_time-page_start_time, 2))+" sec.\n")
 
 
             if start_page:
@@ -270,7 +270,7 @@ class Revision:
         output = "\t<revID>{0}</revID>\n".format(self.rev_id)
         output += "\t\t<ip>{0}</ip>\n".format(self.ip)
         output += "\t\t<country>{0}</country>\n".format(self.country)
-        output += "\t\t<diff_content>{0}</diff_content>\n".format(self.diff_content)
+        output += "\t\t<diff_content>{0}\t\t</diff_content>\n".format(self.diff_content)
         output += "\t</revision>\n"
         return output
 

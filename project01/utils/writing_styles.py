@@ -1,6 +1,6 @@
 # coding: utf-8
 """
-The file used for the writing style analysis.
+The file used for the structure of the writing styles.
 Uses writing_style (to install: 'pip install writing_style')
 """
 

@@ -89,6 +89,7 @@ def main():
                 if "<title>" in line:
                     title_part = line.split("<title>")[1]
                     title = title_part[:title_part.find("<")]
+                    title = re.sub('[/ ]',"_", title)
                     page.add_title(title)
 
 

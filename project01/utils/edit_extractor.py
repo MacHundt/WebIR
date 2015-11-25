@@ -169,11 +169,12 @@ def normalize_text(line):
         return ""
     if "---" in line[:5]:
         return ""
-
-
-    line = line.replace("[[","")
-    line = line.replace("]]","")
-
+    if "...." in line[:5]:
+        return ""
+    if " | " in line[:4]:
+        return ""
+    if "namespace" in line[:17]:
+        return ""
 
     # convert html
     line = html2text(line)
@@ -182,18 +183,26 @@ def normalize_text(line):
     line = line.replace("<i>","")
     line = line.replace("</i>","")
 
-    line = line.replace("''","")
-    line = line.replace('"','')
-    line = line.replace("--","")
+    words = line.split()
 
+    if len(words) < 2:
+        return ""
 
-    # remove all stupid signs
-    line = line.replace("\n"," ")
-    line = line.replace("//"," ")
-    line = line.replace("\\", " ")
+    line = ""
+    first = words[0]
+    for word in words:
+        if word is "\n":
+            continue
+        if not re.match('[a-z]',word.lower()):
+            continue
+        word = re.sub('[0-9]+(th|st|s|\'s)',"", word)
+        word = re.sub('[^a-z.|/\\-]+' , '', word.lower())
 
-    line = re.sub('[0-9]+(th|st|s|\'s)',"", line.lower())
-    line = re.sub('[^a-z,.: |/\\-]+' , '', line)
+        if "-" in first[-1:]:
+            if first is not word:
+                line = line[:-1]
+        first = word
+        line += word+" "
 
     return line+"\n"
 

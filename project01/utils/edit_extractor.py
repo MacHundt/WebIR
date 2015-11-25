@@ -10,7 +10,7 @@ import re
 path_to_dump = "/Users/michaelhundt/Desktop/enwiki-20151102-pages-meta-history1"
 path_to_learning_data = "../data/"
 
-MAX_DIFF_CHARS = 100
+MAX_DIFF_CHARS = 150
 start_page = False
 revision_text = ""
 ip = ""
@@ -167,15 +167,33 @@ def normalize_text(line):
         return ""
     if "&l" in line[:2]:
         return ""
+    if "---" in line[:5]:
+        return ""
+
 
     line = line.replace("[[","")
     line = line.replace("]]","")
 
+
     # convert html
     line = html2text(line)
+    line = line.replace("<b>","")
+    line = line.replace("</b>","")
+    line = line.replace("<i>","")
+    line = line.replace("</i>","")
+
+    line = line.replace("''","")
+    line = line.replace('"','')
+    line = line.replace("--","")
+
 
     # remove all stupid signs
-    line = re.sub('[^a-z,. ]+', '', line.lower())
+    line = line.replace("\n"," ")
+    line = line.replace("//"," ")
+    line = line.replace("\\", " ")
+
+    line = re.sub('[0-9]+(th|st|s|\'s)',"", line.lower())
+    line = re.sub('[^a-z,.: |/\\-]+' , '', line)
 
     return line+"\n"
 
@@ -232,7 +250,6 @@ class Page:
             xml_header = '<?xml version="1.0" encoding="UTF-8"?>'+"\n"
             write_file.write(xml_header)
             output = "<pages>\n<page>\n\t<title>{0}</title>\n".format(self.title)
-            output += "<page>\n\t<title>{0}</title>\n".format(self.title)
             write_file.write(output)
             for revision in self.revisions:
                 write_file.write(revision.to_XML())

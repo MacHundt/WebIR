@@ -1,3 +1,4 @@
+import os
 import time
 
 __author__ = 'wikipedia_project_group'
@@ -6,11 +7,15 @@ from geolocator import retrieve_geo_location as get_geo
 from difflib import Differ
 from html2text import html2text     # download with pip
 import re
+import pickle
 
 path_to_dump = "/Users/michaelhundt/Desktop/enwiki-20151102-pages-meta-history1"
-path_to_learning_data = "../data/"
+path_to_learning_data = "../data/pages/"
+path_to_pickle_objects = "../data/pickle/"
 
-MAX_DIFF_CHARS = 150
+override = False
+
+MAX_DIFF_CHARS = 100
 start_page = False
 revision_text = ""
 ip = ""
@@ -39,6 +44,17 @@ def main():
 
         for line in fp:
 
+            if "<page>" in line:
+                page_start_time = time.time()
+                start_page = True
+                has_previous = False
+                page_counter += 1
+                revision_id = 0
+                page = Page()
+
+            if not start_page:
+                continue
+
             if has_ip:
                 if '<text xml' in line:
                     is_text = True
@@ -64,15 +80,6 @@ def main():
                         reset()
                         continue
 
-            if "<page>" in line:
-                page_start_time = time.time()
-                start_page = True
-                has_previous = False
-                page_counter += 1
-                revision_id = 0
-                page = Page()
-
-
             if "</page>" in line:
                 page_end_time = time.time()
                 if len(page.revisions) > 1:
@@ -80,7 +87,8 @@ def main():
                     start_page = False
                     has_previous = False
                     reset()
-                    page.write_to_XML_file(path_to_learning_data)
+                    #page.write_to_XML_file(path_to_learning_data)
+                    page.save_as_serialized_Object(path_to_pickle_objects)
                     print("running time for "+page.title+": "+str(round(page_end_time-page_start_time, 2))+" sec.\n")
                     continue
 
@@ -90,6 +98,15 @@ def main():
                     title_part = line.split("<title>")[1]
                     title = title_part[:title_part.find("<")]
                     title = re.sub('[/ ]',"_", title)
+                    path_to_file = path_to_learning_data+title+".xml"
+
+                    if override and os.path.isfile(path_to_file):
+                        print(title+" exists already")
+                        start_page = False
+                        has_previous = False
+                        reset()
+                        continue
+
                     page.add_title(title)
 
 
@@ -111,6 +128,7 @@ def main():
                         page.add_revision(revision)
 
                         if has_previous:
+                            # Calculate the DIFF
                             revision.diff(prev_revision)
 
                             if len(revision.diff_content) < MAX_DIFF_CHARS:
@@ -119,12 +137,13 @@ def main():
                                 prev_revision.set_content(revision.content)
                                 page.remove_revision(revision.rev_id)
                             else:
+                                #print(revision.diff_content+"\n")
                                 prev_revision = revision
 
                         else:
                             has_previous = True
-                            print("First revision")
-                            print(revision_text)
+                            #print("First revision")
+                            #print(revision_text)
                             revision.set_diff_conntent(revision.content)
                             prev_revision = revision
 
@@ -267,6 +286,10 @@ class Page:
             write_file.write("</page>\n</pages>\n")
 
 
+    def save_as_serialized_Object(self, path_to_pickle):
+        pickle.dump(self, open(path_to_pickle+self.title, "wb"))
+
+
 
 class Revision:
     """
@@ -316,16 +339,22 @@ class Revision:
         :param prev_revision: Class revision
         '''
         d = Differ()
-        s1 = prev_revision.content.splitlines(keepends=True)
-        s2 = self.content.splitlines(keepends=True)
+        s1 = prev_revision.content
+        s2 = self.content
         #print("calc Diff :)")
-        diff = list(d.compare(s1, s2))
+        diff = list(d.compare(s1.split(" "), s2.split(" ")))
+
+        #print(s1)
+        #print(s2)
 
         for line in diff:
+            #print(line)
             if line[0] == "+":
                 #print(line)
-                temp = str(line).replace("+ ","")
+                temp = str(line).replace("\n","")
+                temp = temp.replace("+ ","")
                 temp = temp.replace("]","")
+                #print(temp)
                 self.diff_content += temp+" "
 
         self.diff_size = len(self.diff_content)

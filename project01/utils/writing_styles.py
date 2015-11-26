@@ -24,15 +24,19 @@ def get_difference(wt1, wt2):
 
 
 class WritingStyle:
-    """A text with writing style."""
+    """A text with writing style and geo-location."""
 
-    def __init__(self, text):
+    def __init__(self, text, geo_location):
         """
-        Initializes the writing-style
+        Initializes the writing-style.
         :param text: The actual text
+        :param geo_location: The actual geo-location
         """
+        # The text and geo-location
         self.text = text
+        self.geo_location = geo_location
 
+        # The writing style
         self.average_word_length = average_word_lengths(text)
         self.stdev_word_length = stdev_word_lengths(text)
         self.average_sentence_length = average_sentence_lengths(text)
@@ -43,28 +47,36 @@ class GeolocatedWritingStyle:
     """The writing style for a specific geo-location."""
 
     def __init__(self, geo_location):
+        """
+        Initializes the geo-located writing-style.
+        :param geo_location: The actual writing-style
+        """
+
         # The geo-location
         self.geo_location = geo_location
 
-        # The writing-style
+        # The mean writing-style
         self.text_count = 0
-        self.average_word_length = 0
-        self.stdev_word_length = 0
-        self.average_sentence_length = 0
-        self.stdev_sentence_length = 0
+        self.mean_average_word_length = 0
+        self.mean_stdev_word_length = 0
+        self.mean_average_sentence_length = 0
+        self.mean_stdev_sentence_length = 0
 
-    def add_text(self, text):
+    def add_writing_style(self, writing_style):
         """
-        Adds a text with writing style.
-        :param text: The text with writing style
+        Adds a writing-style.
+        :param writing_style: The actual writing-style
         """
-        self.average_word_length = (self.average_word_length * self.text_count + text.average_word_length) / \
-            self.text_count + 1
-        self.stdev_word_length = (self.stdev_word_length * self.text_count + text.stdev_word_length) / \
-            self.text_count + 1
-        self.average_sentence_length = (self.average_sentence_length * self.text_count + text.average_sentence_length) / \
-            self.text_count + 1
-        self.stdev_sentence_length = (self.stdev_sentence_length * self.text_count + text.stdev_sentence_length) / \
-            self.text_count + 1
+        self.mean_average_word_length = (self.mean_average_word_length * self.text_count +
+                                         writing_style.average_word_length) / self.text_count + 1
+
+        self.mean_stdev_word_length = (self.mean_stdev_word_length * self.text_count +
+                                       writing_style.stdev_word_length) / self.text_count + 1
+
+        self.mean_average_sentence_length = (self.mean_average_sentence_length * self.text_count +
+                                             writing_style.average_sentence_length) / self.text_count + 1
+
+        self.mean_stdev_sentence_length = (self.mean_stdev_sentence_length * self.text_count +
+                                           writing_style.stdev_sentence_length) / self.text_count + 1
 
         self.text_count += 1

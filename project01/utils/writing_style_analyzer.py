@@ -3,9 +3,39 @@
 The file used for the writing style analysis.
 """
 
-from writing_styles import GeolocatedWritingStyle
+from writing_styles import WritingStyle, GeolocatedWritingStyle
 
 __author__ = 'wikipedia_project_group'
+
+
+class WritingStyleProcessor:
+    """Processes wikipedia pages, determines (geo-located) writing styles and predicts writing styles."""
+
+    def __init__(self):
+        self.writing_style_learner = WritingStyleLearner()
+
+    def process_wikipedia_page(self, page):
+        """
+        Processes a single wikipedia page.
+        :param page: The actual page
+        """
+        # Iterate over all revisions
+        for revision in page.revisions:
+            writing_style = WritingStyle(revision.diff_content, revision.country)
+            self.writing_style_learner.add_writing_style(writing_style)
+
+    def predict_text(self, text):
+        """
+        Predicts the geo-location of a text.
+        :param text: The actual text
+        :return: The geo-location
+        """
+        writing_style = WritingStyle(text, None)
+        writing_style_predictor = WritingStylePredictor(self.writing_style_learner)
+
+        predicted_geo_location = writing_style_predictor.predict_geo_location(writing_style)
+
+        return predicted_geo_location
 
 
 class WritingStyleLearner:
@@ -40,3 +70,4 @@ class WritingStylePredictor:
         # Iterates through all the geo-located writing styles and returns the best fitting one
         # (alternatively it returns all probabilities)
         self.geo_located_writing_styles = writing_style
+        return None

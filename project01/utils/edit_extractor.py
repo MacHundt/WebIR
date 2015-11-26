@@ -10,12 +10,14 @@ import re
 import pickle
 
 path_to_dump = "/Users/michaelhundt/Desktop/enwiki-20151102-pages-meta-history1"
-path_to_learning_data = "../data/pages/"
+path_to_learning_data = "../data/xml/"
 path_to_pickle_objects = "../data/pickle/"
 
-override = False
+override = True
 
-MAX_DIFF_CHARS = 100
+MIN_CONTENT_SIZE = 200      # in char
+MAX_DIFF_CHARS = 100        # in char
+
 start_page = False
 revision_text = ""
 ip = ""
@@ -26,6 +28,9 @@ has_ip = False
 is_text = False
 has_previous = False
 
+text_pattern = re.compile('[a-z]')
+number_pattern = re.compile('[0-9]+(th|st|nd|s|\'s)')
+preprocess_pattern = re.compile('[^a-z.|/\\-]+')
 
 
 def main():
@@ -47,7 +52,7 @@ def main():
             if "<page>" in line:
                 page_start_time = time.time()
                 start_page = True
-                has_previous = False
+                has_previous = False    # revision history
                 page_counter += 1
                 revision_id = 0
                 page = Page()
@@ -74,6 +79,7 @@ def main():
                     ip_counter += 1
                     ip_last = line.split("<ip>")[1]
                     ip = ip_last[:ip_last.find("<")]
+                    # cannot find a country
                     if get_country(ip) is not None:
                         country = get_country(ip)
                     else:
@@ -83,7 +89,7 @@ def main():
             if "</page>" in line:
                 page_end_time = time.time()
                 if len(page.revisions) > 1:
-                    print("save page to XML")
+                    print("save page with title name")
                     start_page = False
                     has_previous = False
                     reset()
@@ -98,7 +104,7 @@ def main():
                     title_part = line.split("<title>")[1]
                     title = title_part[:title_part.find("<")]
                     title = re.sub('[/ ]',"_", title)
-                    path_to_file = path_to_learning_data+title+".xml"
+                    path_to_file = path_to_pickle_objects+title
 
                     if override and os.path.isfile(path_to_file):
                         print(title+" exists already")
@@ -119,11 +125,11 @@ def main():
 
             if is_text:
                 revision_text += normalize_text(line)
-                if '</text>' in line and len(revision_text) > 200:
+                if '</text>' in line and len(revision_text) > MIN_CONTENT_SIZE:
                     # save revision
                     if has_ip:
                         revision_text = revision_text.replace("</text>","")
-                        revision = Revision(revision_id, ip,country,revision_text)
+                        revision = Revision(revision_id, ip, country, revision_text)
                         revision_id += 1
                         page.add_revision(revision)
 
@@ -144,7 +150,7 @@ def main():
                             has_previous = True
                             #print("First revision")
                             #print(revision_text)
-                            revision.set_diff_conntent(revision.content)
+                            revision.set_diff_content(revision.content)
                             prev_revision = revision
 
                     reset()
@@ -213,10 +219,16 @@ def normalize_text(line):
     for word in words:
         if word is "\n":
             continue
-        if not re.match('[a-z]',word.lower()):
+        # remove url
+        if "http:" in word or "www." in word:
             continue
-        word = re.sub('[0-9]+(th|st|s|\'s)',"", word)
-        word = re.sub('[^a-z.|/\\-]+' , '', word.lower())
+        if number_pattern.match(word):
+            line += word
+            continue
+        if not text_pattern.match(word.lower()):
+            continue
+
+        word = re.sub(preprocess_pattern, '', word.lower())
 
         if "-" in first[-1:]:
             if first is not word:
@@ -329,7 +341,7 @@ class Revision:
         self.content = content
 
 
-    def set_diff_conntent(self, diff):
+    def set_diff_content(self, diff):
         self.diff_content = diff
 
 

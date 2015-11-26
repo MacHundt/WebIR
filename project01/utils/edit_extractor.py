@@ -28,6 +28,7 @@ has_ip = False
 is_text = False
 has_previous = False
 
+# create Automates for regex
 text_pattern = re.compile('[a-z]')
 number_pattern = re.compile('[0-9]+(th|st|nd|s|\'s)')
 preprocess_pattern = re.compile('[^a-z.|/\\-]+')

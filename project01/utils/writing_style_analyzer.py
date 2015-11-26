@@ -3,7 +3,7 @@
 The file used for the writing style analysis.
 """
 
-from writing_styles import WritingStyle, GeolocatedWritingStyle
+from writing_styles import WritingStyle, GeolocatedWritingStyle, get_difference
 
 __author__ = 'wikipedia_project_group'
 
@@ -52,7 +52,16 @@ class WritingStyleLearner:
         """
         # Retrieves the right geo-located writing style from the list and adds the current writing style to it
         # If the entry does not exist it creates a new writing geo-located writing style and adds it to the list
-        self.geo_located_writing_styles = writing_style
+        found = False
+        for i, v in enumerate(self.geo_located_writing_styles):
+            if self.geo_located_writing_styles[i].geo_location == writing_style.geo_location:
+                self.geo_located_writing_styles[i].add_writing_style(writing_style)
+                found = True
+                break
+
+        if not found:
+            gl_writing_style = GeolocatedWritingStyle(writing_style)
+            self.geo_located_writing_styles.append(gl_writing_style)
 
 
 class WritingStylePredictor:
@@ -69,5 +78,12 @@ class WritingStylePredictor:
         """
         # Iterates through all the geo-located writing styles and returns the best fitting one
         # (alternatively it returns all probabilities)
-        self.geo_located_writing_styles = writing_style
-        return None
+        differences = []
+
+        for gl_writing_style in self.geo_located_writing_styles:
+            difference = get_difference(gl_writing_style, writing_style)
+            differences.append(difference)
+
+            print(difference)
+
+        return differences

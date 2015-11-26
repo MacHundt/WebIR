@@ -5,6 +5,9 @@ The file used for the writing style analysis.
 
 from writing_styles import WritingStyle, GeolocatedWritingStyle, get_difference
 
+import pickle
+from edit_extractor import Page, Revision
+
 __author__ = 'wikipedia_project_group'
 
 
@@ -87,3 +90,23 @@ class WritingStylePredictor:
             print(difference)
 
         return differences
+
+
+def main():
+    page = pickle.load(open("../data/pickle/Anarchism", 'rb'))
+    processor = WritingStyleProcessor()
+
+    processor.process_wikipedia_page(page)
+    for gl_writing_style in processor.writing_style_learner.geo_located_writing_styles:
+        print("-" * 20)
+        print("Geolocation: " + gl_writing_style.geo_location)
+        print("Mean-average word length: " + str(gl_writing_style.mean_average_word_length))
+        print("Mean-average word length stdev: " + str(gl_writing_style.mean_stdev_word_length))
+        print("Mean-average sentence length: " + str(gl_writing_style.mean_average_sentence_length))
+        print("Mean-average sentence length: stdev: " + str(gl_writing_style.mean_stdev_sentence_length))
+        print("-" * 20)
+        print()
+
+
+if __name__ == '__main__':
+    main()

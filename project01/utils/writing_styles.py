@@ -2,10 +2,14 @@
 """
 The file used for the structure of the writing styles.
 Uses writing_style (to install: 'pip install writing_style')
+Uses nltk (to install: 'pip install nltk' and nltk.download('punkt') and nltk.download('averaged_perceptron_tagger')
 """
 
 from writing_style.analyzer import average_word_lengths, stdev_word_lengths, average_sentence_lengths,\
     stdev_sentence_lengths
+
+import nltk
+from collections import Counter
 
 __author__ = 'wikipedia_project_group'
 
@@ -43,11 +47,27 @@ class WritingStyle:
         self.text = text
         self.geo_location = geo_location
 
+        # Determine the tag-counts
+        self.tag_counts = self._get_tag_counts(text)
+
         # The writing style
         self.average_word_length = average_word_lengths(text)
         self.stdev_word_length = stdev_word_lengths(text)
         self.average_sentence_length = average_sentence_lengths(text)
         self.stdev_sentence_length = stdev_sentence_lengths(text)
+
+    @staticmethod
+    def _get_tag_counts(text):
+        """
+        Retrieves the tags from a text and returns their counts.
+        :param text: The actual text
+        :return: The counts of the tags
+        """
+        words = nltk.word_tokenize(text)
+        tags = nltk.pos_tag(words)
+        tag_counts = Counter(tag for word, tag in tags)
+
+        return tag_counts
 
 
 class GeolocatedWritingStyle:
@@ -64,6 +84,7 @@ class GeolocatedWritingStyle:
 
         # The mean writing-style
         self.count = 1
+        self.tag_counts = {}
         self.mean_average_word_length = writing_style.average_word_length
         self.mean_stdev_word_length = writing_style.stdev_word_length
         self.mean_average_sentence_length = writing_style.stdev_word_length
@@ -85,5 +106,12 @@ class GeolocatedWritingStyle:
 
         self.mean_stdev_sentence_length = (self.mean_stdev_sentence_length * self.count +
                                            writing_style.stdev_sentence_length) / (self.count + 1)
+
+        # Add the tags of the writing-style to the dictionary
+        for tag, count in writing_style.tag_counts.items():
+            if self.tag_counts.get(tag) is None:
+                self.tag_counts[tag] = count
+            else:
+                self.tag_counts[tag] += count
 
         self.count += 1

@@ -3,6 +3,8 @@
 The file used for the structure of the writing styles.
 Uses writing_style (to install: 'pip install writing_style')
 Uses nltk (to install: 'pip install nltk' and nltk.download('punkt') and nltk.download('averaged_perceptron_tagger')
+bassel ninja edit: are we using the java binaries from stanford nlp? we should use a "dumb"-mode for the tagger -
+eugen said "full mode" took 4-5 seconds on his i5 for a single word (in german tho)
 """
 
 from writing_style.analyzer import average_word_lengths, stdev_word_lengths, average_sentence_lengths,\

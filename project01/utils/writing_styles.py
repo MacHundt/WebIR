@@ -56,7 +56,7 @@ class GeolocatedWritingStyle:
     def __init__(self, writing_style):
         """
         Initializes the geo-located writing-style.
-        :param geo_location: The actual writing-style
+        :param writing_style: The actual writing-style
         """
 
         # The geo-location
@@ -75,15 +75,15 @@ class GeolocatedWritingStyle:
         :param writing_style: The actual writing-style
         """
         self.mean_average_word_length = (self.mean_average_word_length * self.count +
-                                         writing_style.average_word_length) / self.count + 1
+                                         writing_style.average_word_length) / (self.count + 1)
 
         self.mean_stdev_word_length = (self.mean_stdev_word_length * self.count +
-                                       writing_style.stdev_word_length) / self.count + 1
+                                       writing_style.stdev_word_length) / (self.count + 1)
 
         self.mean_average_sentence_length = (self.mean_average_sentence_length * self.count +
-                                             writing_style.average_sentence_length) / self.count + 1
+                                             writing_style.average_sentence_length) / (self.count + 1)
 
         self.mean_stdev_sentence_length = (self.mean_stdev_sentence_length * self.count +
-                                           writing_style.stdev_sentence_length) / self.count + 1
+                                           writing_style.stdev_sentence_length) / (self.count + 1)
 
         self.count += 1

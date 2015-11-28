@@ -3,8 +3,6 @@
 The file used for the structure of the writing styles.
 Uses writing_style (to install: 'pip install writing_style')
 Uses nltk (to install: 'pip install nltk' and nltk.download('punkt') and nltk.download('averaged_perceptron_tagger')
-bassel ninja edit: are we using the java binaries from stanford nlp? we should use a "dumb"-mode for the tagger -
-eugen said "full mode" took 4-5 seconds on his i5 for a single word (in german tho)
 """
 
 from writing_style.analyzer import average_word_lengths, stdev_word_lengths, average_sentence_lengths,\
@@ -86,7 +84,7 @@ class GeolocatedWritingStyle:
 
         # The mean writing-style
         self.count = 1
-        self.tag_counts = {}
+        self.tag_counts = Counter()
         self.mean_average_word_length = writing_style.average_word_length
         self.mean_stdev_word_length = writing_style.stdev_word_length
         self.mean_average_sentence_length = writing_style.stdev_word_length
@@ -110,10 +108,6 @@ class GeolocatedWritingStyle:
                                            writing_style.stdev_sentence_length) / (self.count + 1)
 
         # Add the tags of the writing-style to the dictionary
-        for tag, count in writing_style.tag_counts.items():
-            if self.tag_counts.get(tag) is None:
-                self.tag_counts[tag] = count
-            else:
-                self.tag_counts[tag] += count
+        self.tag_counts += writing_style.tag_counts
 
         self.count += 1

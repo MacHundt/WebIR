@@ -31,7 +31,7 @@ has_previous = False
 # create Automates for regex
 text_pattern = re.compile('[a-z]')
 number_pattern = re.compile('[0-9]+(th|st|nd|s|\'s)')
-preprocess_pattern = re.compile('[^a-z.?!-]+')
+preprocess_pattern = re.compile('[^a-z.?!:]+')
 
 tagList = ["b","em","i","small","strong","sub","sup","ins","del","mark","strike","u","href","ref"]
 openTag = ["<{0}>".format(x) for x in tagList]
@@ -98,7 +98,7 @@ def main():
                     start_page = False
                     has_previous = False
                     reset()
-                    #page.write_to_XML_file(path_to_learning_data)
+                    page.write_to_XML_file(path_to_learning_data)
                     page.save_as_serialized_Object(path_to_pickle_objects)
                     print("running time for "+page.title+": "+str(round(page_end_time-page_start_time, 2))+" sec.\n")
                     continue
@@ -154,7 +154,11 @@ def main():
                                 else:
                                     #print(revision.diff_content+"\n")
                                     prev_revision = revision
-
+                            else:
+                                    # override content, but remove the current revision
+                                    # because the change is too small
+                                    prev_revision.set_content(revision.content)
+                                    page.remove_revision(revision.rev_id)
                         else:
                             has_previous = True
                             #print("First revision")
@@ -279,8 +283,9 @@ def normalize_text(line):
         if number_pattern.match(word):
             output += word
             continue
-        word.replace("(","")
-        word.replace(")","")
+        word = word.replace("(","")
+        word = word.replace(")","")
+        word = word.replace('\n',' ')
         #word.replace("ref","")
 
         word = re.sub(preprocess_pattern, '', word)
@@ -295,7 +300,8 @@ def normalize_text(line):
         output += word+" "
 
     if "ref " in output:
-        print(output)
+        output = output.replace("ref "," ")
+        #print(output)
 
     return output+"\n"
 

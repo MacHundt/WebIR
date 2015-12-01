@@ -41,6 +41,7 @@ pip-delete-this-directory.txt
 /assignments/03/test_data.txt
 /project01/utils/learning_data.xml
 htmlcov/
+/project01/data/xml
 .tox/
 .coverage
 .coverage.*

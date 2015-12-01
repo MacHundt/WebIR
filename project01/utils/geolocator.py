@@ -9,7 +9,7 @@ import os
 
 __author__ = 'wikipedia_project_group'
 
-reader = geoip2.database.Reader(os.path.abspath("../data/GeoLite2-City.mmdb"))
+reader = geoip2.database.Reader(os.path.dirname(__file__) + "/../data/GeoLite2-City.mmdb")
 
 
 def retrieve_geo_location(ip_address):

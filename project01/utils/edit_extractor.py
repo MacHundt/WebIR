@@ -238,8 +238,8 @@ def normalize_text(line):
     if not variety_char_threshold(line[:120], 6):
         #print("<6: "+line)
         return ""
-    # average sentence length is 75 chars (14 words)
-    if len(line) > 350 and not re.search('[;:.!?,]', line[:350]):
+    # words in a sentence - heuristic: 30 words a average of 12 chars
+    if len(line) > 360 and not re.search('[;:.!?,]', line[:360]):
         #print("Sen_Fault: "+line)
         return ""
 
@@ -277,7 +277,8 @@ def normalize_text(line):
     for word in words:
         if word is "\n":
             continue
-        if len(word) > 35:
+        # greater tnan "longest word in english"
+        if len(word) > 45:
             continue
         if '/' in word or '\\' in word or '|' in word:
             continue

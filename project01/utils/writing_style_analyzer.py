@@ -85,7 +85,7 @@ class WritingStylePredictor:
         differences = []
 
         for gl_writing_style in self.geo_located_writing_styles:
-            difference = get_difference(gl_writing_style, writing_style)
+            difference = get_similarity(gl_writing_style, writing_style)
             differences.append(difference)
 
             print(difference)
@@ -94,16 +94,15 @@ class WritingStylePredictor:
 
 
 def main():
-    if not os.path.isfile("../data/pickle/trainingsset"):
-        page = pickle.load(open("../data/pickle/Anarchism", 'rb'))
+    if not os.path.isfile("../data/trainingset"):
         processor = WritingStyleProcessor()
 
-        processor.process_wikipedia_page(page)
+        processor.process_wikipedia_page(pickle.load(open("../data/pickle/Albedo", 'rb')))
         geo_located_writing_styles = processor.writing_style_learner.geo_located_writing_styles
 
-        pickle.dump(geo_located_writing_styles, open("../data/pickle/trainingsset", 'wb'))
+        pickle.dump(geo_located_writing_styles, open("../data/trainingset", 'wb'))
     else:
-        geo_located_writing_styles = pickle.load(open("../data/pickle/trainingsset", 'rb'))
+        geo_located_writing_styles = pickle.load(open("../data/trainingset", 'rb'))
 
     writing_style = WritingStyle("this article uses both autistic people or autistic person and people with autism see section below in sociology for terminology. english language on the surface individuals who have autism are physically indistinguishable from those without. sometimes autism cooccurs with other disorders and in those cases outward differences may be apparent. some iew.pdf retrieved ::noted behaviours typically developing infants are social beings  early in life they gaze at people turn toward voices grasp at fingers and smile. in contrast most autistic children do not show special interest in faces and seem to have tremendous difficulty learning to engage in everyday human interaction. even in the first few months of life many autistic children seem indifferent to other people lacking the eye contact and interaction with others that non autistic children exhibit naturally. some infants with autism may appear very calm they may cry less often because they do not seek parental attention or ministration. for other children with autism infantile development progresses normally through language acquisition. between  months and  years however skills previously mastered disappear including language and social skills. it has been noted that members of prefer person page  february autistic adults at the autism society of america  conference felt that the term individuals with autism separates their autism from who they are. in other words they believe their autism is part of who they are and want to be called autistic adults.", None)
     for gl_writing_style in geo_located_writing_styles:

@@ -13,7 +13,7 @@ path_to_dump = "/Users/michaelhundt/Desktop/enwiki-20151102-pages-meta-history1"
 path_to_learning_data = "../data/xml/"
 path_to_pickle_objects = "../data/pickle/"
 
-override = True
+override = False
 
 MIN_CONTENT_SIZE = 200      # in char
 MAX_DIFF_CHARS = 100        # in char
@@ -98,7 +98,7 @@ def main():
                     start_page = False
                     has_previous = False
                     reset()
-                    page.write_to_XML_file(path_to_learning_data)
+                    #page.write_to_XML_file(path_to_learning_data)
                     page.save_as_serialized_Object(path_to_pickle_objects)
                     print("running time for "+page.title+": "+str(round(page_end_time-page_start_time, 2))+" sec.\n")
                     continue
@@ -257,6 +257,10 @@ def normalize_text(line):
         line = re.sub(str('{0}'.format(x)), "", line, re.MULTILINE)
     for x in closedTag:
         line = re.sub(str('{0}'.format(x)), "", line, re.MULTILINE)
+
+
+    # remove all ::+
+    line = re.sub('[:][:]+', " ", line, re.MULTILINE)
 
     line = line.replace("[[","")
     line = line.replace("]]", "")

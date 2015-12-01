@@ -4,7 +4,7 @@ import time
 __author__ = 'wikipedia_project_group'
 
 from geolocator import retrieve_geo_location as get_geo
-from difflib import Differ
+from difflib import Differ, SequenceMatcher
 from html2text import html2text     # download with pip
 import re
 import pickle
@@ -31,7 +31,11 @@ has_previous = False
 # create Automates for regex
 text_pattern = re.compile('[a-z]')
 number_pattern = re.compile('[0-9]+(th|st|nd|s|\'s)')
-preprocess_pattern = re.compile('[^a-z.|/\\-]+')
+preprocess_pattern = re.compile('[^a-z.?!-]+')
+
+tagList = ["b","em","i","small","strong","sub","sup","ins","del","mark","strike","u","href","ref"]
+openTag = ["<{0}>".format(x) for x in tagList]
+closedTag = ["</{0}>".format(x) for x in tagList]
 
 
 def main():
@@ -90,7 +94,7 @@ def main():
             if "</page>" in line:
                 page_end_time = time.time()
                 if len(page.revisions) > 1:
-                    print("save page with title name")
+                    print('save page "'+page.title+'"')
                     start_page = False
                     has_previous = False
                     reset()
@@ -106,8 +110,9 @@ def main():
                     title = title_part[:title_part.find("<")]
                     title = re.sub('[/ ]',"_", title)
                     path_to_file = path_to_pickle_objects+title
+                    print('"'+title+'" ...')
 
-                    if override and os.path.isfile(path_to_file):
+                    if not override and os.path.isfile(path_to_file):
                         print(title+" exists already")
                         start_page = False
                         has_previous = False
@@ -123,8 +128,8 @@ def main():
                 continue
 
 
-
             if is_text:
+
                 revision_text += normalize_text(line)
                 if '</text>' in line and len(revision_text) > MIN_CONTENT_SIZE:
                     # save revision
@@ -136,16 +141,19 @@ def main():
 
                         if has_previous:
                             # Calculate the DIFF
-                            revision.diff(prev_revision)
 
-                            if len(revision.diff_content) < MAX_DIFF_CHARS:
-                                # override content, but remove the current revision
-                                # because the change is too small
-                                prev_revision.set_content(revision.content)
-                                page.remove_revision(revision.rev_id)
-                            else:
-                                #print(revision.diff_content+"\n")
-                                prev_revision = revision
+                            diff_ratio = revision.gef_diff_ratio(prev_revision)
+                            if diff_ratio <= 0.995:
+                                revision.diff(prev_revision)
+
+                                if len(revision.diff_content) < MAX_DIFF_CHARS:
+                                    # override content, but remove the current revision
+                                    # because the change is too small
+                                    prev_revision.set_content(revision.content)
+                                    page.remove_revision(revision.rev_id)
+                                else:
+                                    #print(revision.diff_content+"\n")
+                                    prev_revision = revision
 
                         else:
                             has_previous = True
@@ -164,12 +172,33 @@ def main():
 
 
 def get_country(ip):
-
+    """
+    Get the country from the ip address using geolocator
+    :param ip:
+    :return:
+    """
     geo_location = get_geo(ip)
     if geo_location is not "None":
         return geo_location.country.name
     else:
         return None
+
+
+def variety_char_threshold(line, max_diff_chars):
+    """
+    A helper class to measure the usefulness of a text line.
+    If a whole line contains less than <max_diff> chars from the alphabet the function will return False.
+    :param line: String
+    :param max_diff_chars: int
+    :return: True or False
+    """
+    alphabet_set = set()
+    for char in line:
+        if len(alphabet_set) > max_diff_chars:
+            return True
+        if char not in alphabet_set:
+            alphabet_set.add(char)
+    return False
 
 
 
@@ -200,44 +229,75 @@ def normalize_text(line):
         return ""
     if " | " in line[:4]:
         return ""
+
+    # first 120 chars, 6 different ones
+    if not variety_char_threshold(line[:120], 6):
+        #print("<6: "+line)
+        return ""
+    # average sentence length is 75 chars (14 words)
+    if len(line) > 350 and not re.search('[;:.!?,]', line[:350]):
+        #print("Sen_Fault: "+line)
+        return ""
+
+    line = line.lower()
+    if "align=" in line:
+        #print("Align: "+line)
+        return ""
     if "namespace" in line[:17]:
         return ""
 
-    # convert html
+    # convert html tags
     line = html2text(line)
-    line = line.replace("<b>","")
-    line = line.replace("</b>","")
-    line = line.replace("<i>","")
-    line = line.replace("</i>","")
+    # remove tags
+    for x in openTag:
+        line = re.sub(str('{0}'.format(x)), "", line, re.MULTILINE)
+    for x in closedTag:
+        line = re.sub(str('{0}'.format(x)), "", line, re.MULTILINE)
+
+    line = line.replace("[[","")
+    line = line.replace("]]", "")
+    line = line.replace("\\","")
+    line = line.replace("..."," ")
 
     words = line.split()
-
+    # no whitespace in line
     if len(words) < 2:
         return ""
 
-    line = ""
+    output = ""
     first = words[0]
     for word in words:
         if word is "\n":
+            continue
+        if len(word) > 35:
+            continue
+        if '/' in word or '\\' in word or '|' in word:
             continue
         # remove url
         if "http:" in word or "www." in word:
             continue
         if number_pattern.match(word):
-            line += word
+            output += word
             continue
-        if not text_pattern.match(word.lower()):
-            continue
+        word.replace("(","")
+        word.replace(")","")
+        #word.replace("ref","")
 
-        word = re.sub(preprocess_pattern, '', word.lower())
+        word = re.sub(preprocess_pattern, '', word)
+
+        if "-" in word[:1]:
+            word = " "+word[1:]
 
         if "-" in first[-1:]:
             if first is not word:
-                line = line[:-1]
+                output = output[:-1]
         first = word
-        line += word+" "
+        output += word+" "
 
-    return line+"\n"
+    if "ref " in output:
+        print(output)
+
+    return output+"\n"
 
 
 def reset():
@@ -345,6 +405,16 @@ class Revision:
     def set_diff_content(self, diff):
         self.diff_content = diff
 
+
+    def gef_diff_ratio(self, prev_revision):
+        '''
+        This method calculates the diff_content to the input revision
+        :param prev_revision: Class revision
+        '''
+        d = Differ()
+        s1 = prev_revision.content
+        s2 = self.content
+        return SequenceMatcher(lambda x: x == " ", s1, s2).quick_ratio()
 
     def diff(self, prev_revision):
         '''

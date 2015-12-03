@@ -119,7 +119,7 @@ def main():
     else:
         processor = pickle.load(open("../data/trained_processor", 'rb'))
 
-    text = "this article uses both autistic people or autistic person and people with autism see section below in " \
+    american_text = "this article uses both autistic people or autistic person and people with autism see section below in " \
            "sociology for terminology. english language on the surface individuals who have autism are physically" \
            " indistinguishable from those without. sometimes autism cooccurs with other disorders and in those cases" \
            " outward differences may be apparent. some iew.pdf retrieved ::noted behaviours typically developing " \
@@ -135,7 +135,7 @@ def main():
            "conference felt that the term individuals with autism separates their autism from who they are. in " \
            "other words they believe their autism is part of who they are and want to be called autistic adults."
 
-    probabilities, predicted_geo_location = processor.predict_text(text)
+    probabilities, predicted_geo_location = processor.predict_text(american_text)
 
     for geo_location, prediction in probabilities.items():
         print("-" * 20)

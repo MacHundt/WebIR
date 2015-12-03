@@ -6,7 +6,6 @@ Uses nltk (to install: 'pip install nltk' and nltk.download('punkt') and nltk.do
 """
 
 from writing_style.analyzer import stdev_word_lengths, stdev_sentence_lengths
-
 import nltk
 from collections import Counter
 from copy import deepcopy
@@ -16,12 +15,12 @@ __author__ = 'wikipedia_project_group'
 MINIMUM_WRITING_STYLES_COUNT = 10
 
 
-def get_similarity(gl_writing_style, writing_style):
+def get_difference(gl_writing_style, writing_style):
     """
-    Gets the percentual similarity between a geo-located and normal writing style.
+    Gets the difference between a geo-located and a writing style.
     :param gl_writing_style: The geo-located writing style
     :param writing_style: The writing style
-    :return: The similarity in percentage as a list
+    :return: The difference in percentage as a list
     """
     # Return if the geo-located writing style has not enough entries
     if gl_writing_style.count < MINIMUM_WRITING_STYLES_COUNT:
@@ -34,21 +33,19 @@ def get_similarity(gl_writing_style, writing_style):
         if gl_mean_tags[key] == 0:
             tag_differences[key] = 0.0
         else:
-            tag_differences[key] = (gl_mean_tags[key] - float(value)) / gl_mean_tags[key]
+            tag_differences[key] = abs(gl_mean_tags[key] - value)
 
     match = 0.0
     for _, value in tag_differences.items():
-        match += 1 - abs(value)
+        match += value
 
     match /= len(writing_style.tag_counts)
 
-    return [(1 - abs((gl_writing_style.mean_stdev_word_length - writing_style.stdev_word_length) /
-                     gl_writing_style.mean_stdev_word_length)) * 100,
+    return [abs(gl_writing_style.mean_stdev_word_length - writing_style.stdev_word_length),
 
-            (1 - abs((gl_writing_style.mean_stdev_sentence_length - writing_style.stdev_sentence_length) /
-                     gl_writing_style.mean_stdev_sentence_length)) * 100,
+            abs(gl_writing_style.mean_stdev_sentence_length - writing_style.stdev_sentence_length),
 
-            match * 100]
+            match]
 
 
 class WritingStyle:

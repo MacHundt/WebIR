@@ -3,8 +3,7 @@
 The file used for the writing style analysis.
 """
 
-from writing_styles import WritingStyle, GeolocatedWritingStyle, get_similarity
-
+from writing_styles import WritingStyle, GeolocatedWritingStyle, get_difference
 import pickle
 import os.path
 from edit_extractor import Page, Revision
@@ -32,16 +31,17 @@ class WritingStyleProcessor:
 
     def predict_text(self, text):
         """
-        Predicts the geo-location of a text.
+        Gets the geo-location-probabilities and the geo-location-prediction for a text.
         :param text: The actual text
-        :return: The geo-location
+        :return: The probabilities and the prediction
         """
         writing_style = WritingStyle(text, None)
         writing_style_predictor = WritingStylePredictor(self.writing_style_learner)
 
-        predictions = writing_style_predictor.predict_geo_locations(writing_style)
+        probabilities = writing_style_predictor.get_probabilities(writing_style)
+        predicted_geo_location = writing_style_predictor.predict_geo_location(writing_style)
 
-        return predictions
+        return probabilities, predicted_geo_location
 
 
 class WritingStyleLearner:
@@ -74,22 +74,37 @@ class WritingStylePredictor:
     def __init__(self, writing_style_learner):
         self.geo_located_writing_styles = writing_style_learner.geo_located_writing_styles
 
-    def predict_geo_locations(self, writing_style):
+    def get_probabilities(self, writing_style):
         """
-        Predicts the probabilities of the geo-locations for a given writing style
+        Gets the probabilities of the geo-locations for a given writing style
         :param writing_style: The actual writing style
-        :return: The probabilities for the geo-locations
+        :return: The probabilities of the geo-locations
         """
-        predictions = {}
+        probabilities = {}
 
         for gl_writing_style in self.geo_located_writing_styles:
-            similarity = get_similarity(gl_writing_style, writing_style)
+            difference = get_difference(gl_writing_style, writing_style)
 
-            if similarity is not None:
+            if difference is not None:
+                probabilities[gl_writing_style.geo_location] = difference
 
-                predictions[gl_writing_style.geo_location] = similarity
+        return probabilities
 
-        return predictions
+    def predict_geo_location(self, writing_style):
+        """
+        Predicts the geo-location based on the tags
+        :param writing_style: The actual writing style
+        :return: The predicted geo-location
+        """
+        probabilities = self.get_probabilities(writing_style)
+
+        prediction, prediction_value = '', -1
+        for geo_location, differences in probabilities.items():
+            if prediction_value == -1 or differences[2] < prediction_value:
+                prediction = geo_location
+                prediction_value = differences[2]
+
+        return prediction
 
 
 def main():
@@ -120,16 +135,21 @@ def main():
            "conference felt that the term individuals with autism separates their autism from who they are. in " \
            "other words they believe their autism is part of who they are and want to be called autistic adults."
 
-    predictions = processor.predict_text(text)
+    probabilities, predicted_geo_location = processor.predict_text(text)
 
-    for geo_location, prediction in predictions.items():
+    for geo_location, prediction in probabilities.items():
         print("-" * 20)
         print("Geo-location: " + geo_location)
-        print("Similarity standard-deviation word-length: " + '%.2f' % prediction[0] + '%')
-        print("Similarity standard-deviation sentence-length: " + '%.2f' % prediction[1] + '%')
-        print("Similarity tag-counts: " + '%.2f' % prediction[2] + '%')
+        print("Difference standard-deviation word-length: " + str(prediction[0]))
+        print("Difference standard-deviation sentence-length: " + str(prediction[1]))
+        print("Difference tag-counts: " + str(prediction[2]))
         print("-" * 20)
         print()
+
+    print("-" * 20)
+    print("Most probable geo-location: " + predicted_geo_location)
+    print("-" * 20)
+
 
 if __name__ == '__main__':
     main()

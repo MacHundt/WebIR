@@ -21,5 +21,5 @@ def retrieve_geo_location(ip_address):
     global reader
     try:
         return reader.city(ip_address)
-    except Exception as e:
+    except Exception:
         return "None"

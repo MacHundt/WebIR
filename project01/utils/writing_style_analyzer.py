@@ -28,6 +28,8 @@ class WritingStyleProcessor:
             writing_style = WritingStyle(revision.diff_content, revision.country)
             self.writing_style_learner.add_writing_style(writing_style)
 
+        print("Processed: " + page.title)
+
     def predict_text(self, text):
         """
         Predicts the geo-location of a text.
@@ -37,9 +39,9 @@ class WritingStyleProcessor:
         writing_style = WritingStyle(text, None)
         writing_style_predictor = WritingStylePredictor(self.writing_style_learner)
 
-        predicted_geo_location = writing_style_predictor.predict_geo_location(writing_style)
+        predictions = writing_style_predictor.predict_geo_locations(writing_style)
 
-        return predicted_geo_location
+        return predictions
 
 
 class WritingStyleLearner:
@@ -54,8 +56,6 @@ class WritingStyleLearner:
         Adds a writing style to the learner
         :param writing_style: The actual writing style
         """
-        # Retrieves the right geo-located writing style from the list and adds the current writing style to it
-        # If the entry does not exist it creates a new writing geo-located writing style and adds it to the list
         found = False
         for i, v in enumerate(self.geo_located_writing_styles):
             if self.geo_located_writing_styles[i].geo_location == writing_style.geo_location:
@@ -74,46 +74,60 @@ class WritingStylePredictor:
     def __init__(self, writing_style_learner):
         self.geo_located_writing_styles = writing_style_learner.geo_located_writing_styles
 
-    def predict_geo_location(self, writing_style):
+    def predict_geo_locations(self, writing_style):
         """
-        Predicts the geo-location for a given writing style
+        Predicts the probabilities of the geo-locations for a given writing style
         :param writing_style: The actual writing style
-        :return: The geo-location
+        :return: The probabilities for the geo-locations
         """
-        # Iterates through all the geo-located writing styles and returns the best fitting one
-        # (alternatively it returns all probabilities)
-        differences = []
+        predictions = {}
 
         for gl_writing_style in self.geo_located_writing_styles:
-            difference = get_similarity(gl_writing_style, writing_style)
-            differences.append(difference)
+            similarity = get_similarity(gl_writing_style, writing_style)
 
-            print(difference)
+            if similarity is not None:
 
-        return differences
+                predictions[gl_writing_style.geo_location] = similarity
+
+        return predictions
 
 
 def main():
-    if not os.path.isfile("../data/trainingset"):
+    if not os.path.isfile("../data/trained_processor"):
         processor = WritingStyleProcessor()
 
         processor.process_wikipedia_page(pickle.load(open("../data/pickle/Albedo", 'rb')))
-        geo_located_writing_styles = processor.writing_style_learner.geo_located_writing_styles
+        processor.process_wikipedia_page(pickle.load(open("../data/pickle/Altruism", 'rb')))
+        processor.process_wikipedia_page(pickle.load(open("../data/pickle/Academy_Awards", 'rb')))
 
-        pickle.dump(geo_located_writing_styles, open("../data/trainingset", 'wb'))
+        pickle.dump(processor, open("../data/trained_processor", 'wb'))
     else:
-        geo_located_writing_styles = pickle.load(open("../data/trainingset", 'rb'))
+        processor = pickle.load(open("../data/trained_processor", 'rb'))
 
-    writing_style = WritingStyle("this article uses both autistic people or autistic person and people with autism see section below in sociology for terminology. english language on the surface individuals who have autism are physically indistinguishable from those without. sometimes autism cooccurs with other disorders and in those cases outward differences may be apparent. some iew.pdf retrieved ::noted behaviours typically developing infants are social beings  early in life they gaze at people turn toward voices grasp at fingers and smile. in contrast most autistic children do not show special interest in faces and seem to have tremendous difficulty learning to engage in everyday human interaction. even in the first few months of life many autistic children seem indifferent to other people lacking the eye contact and interaction with others that non autistic children exhibit naturally. some infants with autism may appear very calm they may cry less often because they do not seek parental attention or ministration. for other children with autism infantile development progresses normally through language acquisition. between  months and  years however skills previously mastered disappear including language and social skills. it has been noted that members of prefer person page  february autistic adults at the autism society of america  conference felt that the term individuals with autism separates their autism from who they are. in other words they believe their autism is part of who they are and want to be called autistic adults.", None)
-    for gl_writing_style in geo_located_writing_styles:
-        similarity = get_similarity(gl_writing_style, writing_style)
+    text = "this article uses both autistic people or autistic person and people with autism see section below in " \
+           "sociology for terminology. english language on the surface individuals who have autism are physically" \
+           " indistinguishable from those without. sometimes autism cooccurs with other disorders and in those cases" \
+           " outward differences may be apparent. some iew.pdf retrieved ::noted behaviours typically developing " \
+           "infants are social beings  early in life they gaze at people turn toward voices grasp at fingers and " \
+           "smile. in contrast most autistic children do not show special interest in faces and seem to have " \
+           "tremendous difficulty learning to engage in everyday human interaction. even in the first few months of " \
+           "life many autistic children seem indifferent to other people lacking the eye contact and interaction with" \
+           " others that non autistic children exhibit naturally. some infants with autism may appear very calm they " \
+           "may cry less often because they do not seek parental attention or ministration. for other children with " \
+           "autism infantile development progresses normally through language acquisition. between  months and  " \
+           "years however skills previously mastered disappear including language and social skills. it has been " \
+           "noted that members of prefer person page  february autistic adults at the autism society of america  " \
+           "conference felt that the term individuals with autism separates their autism from who they are. in " \
+           "other words they believe their autism is part of who they are and want to be called autistic adults."
 
+    predictions = processor.predict_text(text)
+
+    for geo_location, prediction in predictions.items():
         print("-" * 20)
-        print("Geolocation: " + gl_writing_style.geo_location)
-        print("Revision-Count: " + str(gl_writing_style.count))
-        print("Similarity standard-deviation word-length: " + '%.2f' % similarity[0] + '%')
-        print("Similarity standard-deviation sentence-length: " + '%.2f' % similarity[1] + '%')
-        print("Similarity tag-counts: " + '%.2f' % similarity[2] + '%')
+        print("Geo-location: " + geo_location)
+        print("Similarity standard-deviation word-length: " + '%.2f' % prediction[0] + '%')
+        print("Similarity standard-deviation sentence-length: " + '%.2f' % prediction[1] + '%')
+        print("Similarity tag-counts: " + '%.2f' % prediction[2] + '%')
         print("-" * 20)
         print()
 

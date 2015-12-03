@@ -13,6 +13,8 @@ from copy import deepcopy
 
 __author__ = 'wikipedia_project_group'
 
+MINIMUM_WRITING_STYLES_COUNT = 10
+
 
 def get_similarity(gl_writing_style, writing_style):
     """
@@ -21,6 +23,10 @@ def get_similarity(gl_writing_style, writing_style):
     :param writing_style: The writing style
     :return: The similarity in percentage as a list
     """
+    # Return if the geo-located writing style has not enough entries
+    if gl_writing_style.count < MINIMUM_WRITING_STYLES_COUNT:
+        return None
+
     gl_mean_tags = gl_writing_style.get_mean_tags()
     tag_differences = deepcopy(writing_style.tag_counts)
 
@@ -64,6 +70,10 @@ class WritingStyle:
         # The writing style
         self.stdev_word_length = stdev_word_lengths(text)
         self.stdev_sentence_length = stdev_sentence_lengths(text)
+
+        # Make sure that each text has at least one sentence
+        if self.stdev_sentence_length == 0:
+            self.stdev_sentence_length = 1
 
     @staticmethod
     def _get_tag_counts(text):

@@ -126,6 +126,7 @@ def main():
         for file_name in os.listdir("../data/pickle"):
             page = pickle.load(open("../data/pickle/" + file_name, 'rb'))
             processor.process_wikipedia_page(page)
+            print("Processed: " + page.title)
 
         pickle.dump(processor, open("../data/trained_processor", 'wb'))
     else:
@@ -148,15 +149,6 @@ def main():
            "other words they believe their autism is part of who they are and want to be called autistic adults."
 
     probabilities, predicted_geo_location = processor.predict_text(text)
-
-    for geo_location, prediction in probabilities.items():
-        print("-" * 20)
-        print("Geo-location: " + geo_location)
-        print("Difference standard-deviation word-length: " + str(prediction[0]))
-        print("Difference standard-deviation sentence-length: " + str(prediction[1]))
-        print("Difference tag-counts: " + str(prediction[2]))
-        print("-" * 20)
-        print()
 
     print("-" * 20)
     print("Most probable geo-location: " + predicted_geo_location)

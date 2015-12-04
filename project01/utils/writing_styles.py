@@ -12,7 +12,7 @@ from copy import deepcopy
 
 __author__ = 'wikipedia_project_group'
 
-MINIMUM_WRITING_STYLES_COUNT = 10
+MINIMUM_WRITING_STYLES_COUNT = 50
 
 
 def get_difference(gl_writing_style, writing_style):
@@ -100,7 +100,7 @@ class GeolocatedWritingStyle:
 
         # The mean writing-style
         self.count = 1
-        self.tag_counts = Counter()
+        self.tag_counts = writing_style.tag_counts
         self.mean_stdev_word_length = writing_style.stdev_word_length
         self.mean_stdev_sentence_length = writing_style.stdev_sentence_length
 

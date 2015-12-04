@@ -3,10 +3,12 @@
 The file used for the writing style analysis.
 """
 
-from writing_styles import WritingStyle, GeolocatedWritingStyle, get_difference
-import pickle
-import os.path
+from writing_styles import WritingStyle, GeolocatedWritingStyle, get_difference, MINIMUM_WRITING_STYLES_COUNT
 from edit_extractor import Page, Revision
+
+import pickle
+import random
+import os.path
 
 __author__ = 'wikipedia_project_group'
 
@@ -22,12 +24,9 @@ class WritingStyleProcessor:
         Processes a single wikipedia page.
         :param page: The actual page
         """
-        # Iterate over all revisions
         for revision in page.revisions:
             writing_style = WritingStyle(revision.diff_content, revision.country)
             self.writing_style_learner.add_writing_style(writing_style)
-
-        print("Processed: " + page.title)
 
     def predict_text(self, text):
         """
@@ -42,6 +41,19 @@ class WritingStyleProcessor:
         predicted_geo_location = writing_style_predictor.predict_geo_location(writing_style)
 
         return probabilities, predicted_geo_location
+
+    def get_geo_located_writing_styles(self):
+        """
+        Only returns the geo-located writing styles that contain a certain threshold of texts.
+        :return: The geo-located writing styles
+        """
+        filtered = []
+
+        for gl_writing_style in self.writing_style_learner.geo_located_writing_styles:
+            if gl_writing_style.count >= MINIMUM_WRITING_STYLES_COUNT:
+                filtered.append(gl_writing_style)
+
+        return filtered
 
 
 class WritingStyleLearner:
@@ -112,7 +124,8 @@ def main():
         processor = WritingStyleProcessor()
 
         for file_name in os.listdir("../data/pickle"):
-            processor.process_wikipedia_page(pickle.load(open("../data/pickle/" + file_name, 'rb')))
+            page = pickle.load(open("../data/pickle/" + file_name, 'rb'))
+            processor.process_wikipedia_page(page)
 
         pickle.dump(processor, open("../data/trained_processor", 'wb'))
     else:
@@ -148,7 +161,6 @@ def main():
     print("-" * 20)
     print("Most probable geo-location: " + predicted_geo_location)
     print("-" * 20)
-
 
 if __name__ == '__main__':
     main()

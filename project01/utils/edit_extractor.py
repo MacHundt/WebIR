@@ -38,7 +38,7 @@ openTag = ["<{0}>".format(x) for x in tagList]
 closedTag = ["</{0}>".format(x) for x in tagList]
 
 
-def main():
+def extract_edits():
     """
     The edit extractor uses a widipedia dump file to extract the edits of a page and maps them to a geo location.
     The diff-content to the previous edit is calculated and stored, if it is big enough.
@@ -475,4 +475,4 @@ class Revision:
             prev_revision.content = None
 
 if __name__ == '__main__':
-    main()
+    extract_edits()

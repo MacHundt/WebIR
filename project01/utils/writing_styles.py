@@ -5,7 +5,7 @@ Uses writing_style (to install: 'pip install writing_style')
 Uses nltk (to install: 'pip install nltk' and nltk.download('punkt') and nltk.download('averaged_perceptron_tagger')
 """
 
-from writing_style.analyzer import stdev_word_lengths, stdev_sentence_lengths
+from writing_style.analyzer import word_lengths, sentence_lengths
 import nltk
 from collections import Counter
 from copy import deepcopy
@@ -41,9 +41,9 @@ def get_difference(gl_writing_style, writing_style):
 
     match /= len(writing_style.tag_counts)
 
-    return [abs(gl_writing_style.mean_stdev_word_length - writing_style.stdev_word_length),
+    return [abs(gl_writing_style.mean_word_length - writing_style.word_length),
 
-            abs(gl_writing_style.mean_stdev_sentence_length - writing_style.stdev_sentence_length),
+            abs(gl_writing_style.mean_sentence_length - writing_style.sentence_length),
 
             match]
 
@@ -64,13 +64,13 @@ class WritingStyle:
         # Determine the tag-counts
         self.tag_counts = self._get_tag_counts(text)
 
-        # The writing style
-        self.stdev_word_length = stdev_word_lengths(text)
-        self.stdev_sentence_length = stdev_sentence_lengths(text)
+        # The word- and sentence-lengths
+        self.word_length = word_lengths(text)
+        self.sentence_length = sentence_lengths(text)
 
         # Make sure that each text has at least one sentence
-        if self.stdev_sentence_length == 0:
-            self.stdev_sentence_length = 1
+        if self.sentence_length == 0:
+            self.sentence_length = 1
 
     @staticmethod
     def _get_tag_counts(text):
@@ -101,8 +101,8 @@ class GeolocatedWritingStyle:
         # The mean writing-style
         self.count = 1
         self.tag_counts = writing_style.tag_counts
-        self.mean_stdev_word_length = writing_style.stdev_word_length
-        self.mean_stdev_sentence_length = writing_style.stdev_sentence_length
+        self.mean_word_length = writing_style.word_length
+        self.mean_sentence_length = writing_style.sentence_length
 
     def get_mean_tags(self):
         """
@@ -121,11 +121,11 @@ class GeolocatedWritingStyle:
         Adds a writing-style.
         :param writing_style: The actual writing-style
         """
-        self.mean_stdev_word_length = (self.mean_stdev_word_length * self.count +
-                                       writing_style.stdev_word_length) / (self.count + 1)
+        self.mean_word_length = (self.mean_word_length * self.count +
+                                 writing_style.word_length) / (self.count + 1)
 
-        self.mean_stdev_sentence_length = (self.mean_stdev_sentence_length * self.count +
-                                           writing_style.stdev_sentence_length) / (self.count + 1)
+        self.mean_sentence_length = (self.mean_sentence_length * self.count +
+                                     writing_style.sentence_length) / (self.count + 1)
 
         # Add the tags of the writing-style to the dictionary
         self.tag_counts += writing_style.tag_counts

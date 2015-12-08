@@ -4,6 +4,8 @@ The file used for the structure of the writing styles.
 Uses writing_style (to install: 'pip install writing_style')
 Uses nltk (to install: 'pip install nltk' and nltk.download('punkt') and nltk.download('averaged_perceptron_tagger')
 """
+from nltk.corpus import stopwords
+from nltk.tokenize import RegexpTokenizer
 
 from writing_style.analyzer import average_word_lengths, average_sentence_lengths
 import nltk
@@ -68,8 +70,15 @@ class WritingStyle:
         self.average_word_length = average_word_lengths(text)
         self.average_sentence_length = average_sentence_lengths(text)
 
+        # terms / without stopwords
+        self.term_counter = 0
+        self.revision_term_dictionary = {}
+        # count the terms, override self.term_counter and revision_term_dictionary
+        self._get_term_counts(text)
+
         # Make sure that each text has at least one sentence
         if self.average_sentence_length == 0:
+
             self.average_sentence_length = 1
 
     @staticmethod
@@ -89,6 +98,26 @@ class WritingStyle:
         return tag_counts
 
 
+    def _get_term_counts(text):
+        """
+        Removes stopwords and counts the absolute terms and builds up a dictionary
+        :param text:
+        """
+        global term_counter, revision_term_dictionary
+        # import punctuation and stopwords
+        tokenizer = RegexpTokenizer(r'\w+')
+        text = tokenizer.tokenize(text)
+        stop = stopwords.words('english')
+        text_wo_stop = [i for i in text if i not in stop]
+        for term in text_wo_stop:
+            term_counter += 1
+            if term in revision_term_dictionary:
+                revision_term_dictionary[term] = revision_term_dictionary[term] + 1
+            else:
+                revision_term_dictionary[term] = 1
+
+
+
 class GeolocatedWritingStyle:
     """The writing style for a specific geo-location."""
 
@@ -106,6 +135,11 @@ class GeolocatedWritingStyle:
         self.tag_counts = writing_style.tag_counts
         self.mean_word_length = writing_style.average_word_length
         self.mean_sentence_length = writing_style.average_sentence_length
+
+        # Term-Frequency: absolute counter of terms and a dictionary,
+        self.term_counter = 0
+        self.term_dictionary = {}
+
 
     def get_mean_tags(self):
         """
@@ -134,3 +168,12 @@ class GeolocatedWritingStyle:
         self.tag_counts += writing_style.tag_counts
 
         self.count += 1
+
+        # terms
+        self.term_counter = self.term_counter + writing_style.term_counter
+        for term, count in writing_style.revision_term_dictionary.items():
+            if term in self.term_dictionary:
+                self.term_dictionary[term] = self.term_dictionary[term] + count
+            else:
+                self.term_dictionary[term] = count
+

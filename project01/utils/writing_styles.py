@@ -83,6 +83,9 @@ class WritingStyle:
         tags = nltk.pos_tag(words)
         tag_counts = Counter(tag for word, tag in tags)
 
+        for key, value in tag_counts.items():
+            tag_counts[key] = value / len(tags)
+
         return tag_counts
 
 

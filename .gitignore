@@ -114,3 +114,6 @@ crashlytics-build.properties
 
 # Mac-OSX
 .DS_Store
+
+# Pickle files in project01/data/pickle/
+project01/data/pickle/*

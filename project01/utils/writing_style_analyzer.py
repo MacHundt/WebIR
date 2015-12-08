@@ -119,40 +119,15 @@ class WritingStylePredictor:
         return prediction
 
 
-def main():
-    if not os.path.isfile("../data/trained_processor"):
-        processor = WritingStyleProcessor()
+def train_writing_style_predictor():
+    processor = WritingStyleProcessor()
 
-        for file_name in os.listdir("../data/pickle"):
-            page = pickle.load(open("../data/pickle/" + file_name, 'rb'))
-            processor.process_wikipedia_page(page)
-            print("Processed: " + page.title)
+    for file_name in os.listdir("../data/pickle"):
+        page = pickle.load(open("../data/pickle/" + file_name, 'rb'))
+        processor.process_wikipedia_page(page)
+        print("Processed: " + page.title)
 
-        pickle.dump(processor, open("../data/trained_processor", 'wb'))
-    else:
-        processor = pickle.load(open("../data/trained_processor", 'rb'))
-
-    text = "this article uses both autistic people or autistic person and people with autism see section below in " \
-           "sociology for terminology. english language on the surface individuals who have autism are physically" \
-           " indistinguishable from those without. sometimes autism cooccurs with other disorders and in those cases" \
-           " outward differences may be apparent. some iew.pdf retrieved ::noted behaviours typically developing " \
-           "infants are social beings  early in life they gaze at people turn toward voices grasp at fingers and " \
-           "smile. in contrast most autistic children do not show special interest in faces and seem to have " \
-           "tremendous difficulty learning to engage in everyday human interaction. even in the first few months of " \
-           "life many autistic children seem indifferent to other people lacking the eye contact and interaction with" \
-           " others that non autistic children exhibit naturally. some infants with autism may appear very calm they " \
-           "may cry less often because they do not seek parental attention or ministration. for other children with " \
-           "autism infantile development progresses normally through language acquisition. between  months and  " \
-           "years however skills previously mastered disappear including language and social skills. it has been " \
-           "noted that members of prefer person page  february autistic adults at the autism society of america  " \
-           "conference felt that the term individuals with autism separates their autism from who they are. in " \
-           "other words they believe their autism is part of who they are and want to be called autistic adults."
-
-    probabilities, predicted_geo_location = processor.predict_text(text)
-
-    print("-" * 20)
-    print("Most probable geo-location: " + predicted_geo_location)
-    print("-" * 20)
+    pickle.dump(processor, open("../data/trained_processor", 'wb'))
 
 if __name__ == '__main__':
-    main()
+    train_writing_style_predictor()

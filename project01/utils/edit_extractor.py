@@ -1,3 +1,5 @@
+import math
+
 __author__ = 'wikipedia_project_group'
 
 from geolocator import retrieve_geo_location as get_geo
@@ -438,24 +440,24 @@ class Revision:
 
         # if diff text is too big, cut it into smaller chunks to avoid Errors
 
-        # if abs(len(s1) - len(s2)) > 3000:
-        #     if len(s2) > 2000 and len(s1) > 1000:
-        #         lastIndex = 0
-        #         for i in range(math.ceil(len(s2) / 1000)):
-        #             s2_i_content = s2[lastIndex:(i + 1) * 1000]
-        #             s2_i_revsision = Revision(self.rev_id,
-        #                                       self.ip,
-        #                                       self.country,
-        #                                       s2_i_content,
-        #                                       keep_content=True)
-        #             s2_i_revsision.diff(prev_revision)
-        #             if self.diff_content:
-        #                 self.diff_content = self.diff_content[:-1]
-        #             self.diff_content += s2_i_revsision.diff_content
-        #             self.diff_size += s2_i_revsision.diff_size
-        #             lastIndex = (i + 1) * 1000
-        #         prev_revision.content = None
-        #         return
+        if abs(len(s1) - len(s2)) > 3000:
+            if len(s2) > 2000 and len(s1) > 1000:
+                lastIndex = 0
+                for i in range(math.ceil(len(s2) / 1000)):
+                    s2_i_content = s2[lastIndex:(i + 1) * 1000]
+                    s2_i_revsision = Revision(self.rev_id,
+                                              self.ip,
+                                              self.country,
+                                              s2_i_content,
+                                              keep_content=True)
+                    s2_i_revsision.diff(prev_revision)
+                    if self.diff_content:
+                        self.diff_content = self.diff_content[:-1]
+                    self.diff_content += s2_i_revsision.diff_content
+                    self.diff_size += s2_i_revsision.diff_size
+                    lastIndex = (i + 1) * 1000
+                prev_revision.content = None
+                return
 
         diff = list(d.compare(s1.split(" "), s2.split(" ")))
 

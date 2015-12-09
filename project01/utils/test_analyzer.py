@@ -57,7 +57,7 @@ def main():
                 continue
 
     print()
-    print(15 * '-' + " Deviation from expected result " + 15 * '-')
+    print(12 * '-' + " Deviation from expected results " + 12 * '-')
     print()
 
     # Print the country-deviations
@@ -65,7 +65,7 @@ def main():
         print(key + ': ' + value)
 
     print()
-    print(15 * '-' + " Result " + 15 * '-')
+    print(12 * '-' + " Result " + 12 * '-')
     print()
     print("Count Geo-locations: " + str(len(processor.get_geo_located_writing_styles())))
     print("Count Revisions: " + str(count))

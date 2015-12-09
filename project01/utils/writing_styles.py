@@ -70,15 +70,14 @@ class WritingStyle:
         self.average_word_length = average_word_lengths(text)
         self.average_sentence_length = average_sentence_lengths(text)
 
-        # terms / without stopwords
+        # Terms without stopwords
         self.term_counter = 0
         self.revision_term_dictionary = {}
-        # count the terms, override self.term_counter and revision_term_dictionary
+        # Count the terms, override self.term_counter and revision_term_dictionary
         self._get_term_counts(text)
 
         # Make sure that each text has at least one sentence
         if self.average_sentence_length == 0:
-
             self.average_sentence_length = 1
 
     @staticmethod
@@ -97,25 +96,24 @@ class WritingStyle:
 
         return tag_counts
 
-
-    def _get_term_counts(text):
+    def _get_term_counts(self, text):
         """
         Removes stopwords and counts the absolute terms and builds up a dictionary
         :param text:
         """
-        global term_counter, revision_term_dictionary
-        # import punctuation and stopwords
+
+        # Import punctuation and stopwords
         tokenizer = RegexpTokenizer(r'\w+')
         text = tokenizer.tokenize(text)
         stop = stopwords.words('english')
         text_wo_stop = [i for i in text if i not in stop]
-        for term in text_wo_stop:
-            term_counter += 1
-            if term in revision_term_dictionary:
-                revision_term_dictionary[term] = revision_term_dictionary[term] + 1
-            else:
-                revision_term_dictionary[term] = 1
 
+        for term in text_wo_stop:
+            self.term_counter += 1
+            if term in self.revision_term_dictionary:
+                self.revision_term_dictionary[term] += 1
+            else:
+                self.revision_term_dictionary[term] = 1
 
 
 class GeolocatedWritingStyle:
@@ -139,7 +137,6 @@ class GeolocatedWritingStyle:
         # Term-Frequency: absolute counter of terms and a dictionary,
         self.term_counter = 0
         self.term_dictionary = {}
-
 
     def get_mean_tags(self):
         """
@@ -176,4 +173,3 @@ class GeolocatedWritingStyle:
                 self.term_dictionary[term] = self.term_dictionary[term] + count
             else:
                 self.term_dictionary[term] = count
-

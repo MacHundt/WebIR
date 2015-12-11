@@ -7,7 +7,6 @@ from writing_styles import WritingStyle, GeolocatedWritingStyle, get_difference,
 from edit_extractor import Page, Revision
 
 import pickle
-import random
 import os.path
 
 __author__ = 'wikipedia_project_group'

@@ -1,14 +1,15 @@
-import math
-
-__author__ = 'wikipedia_project_group'
 
 from geolocator import retrieve_geo_location as get_geo
 from difflib import Differ, SequenceMatcher
-from html2text import html2text  # download with pip
+from html2text import html2text
+import math
 import re
-import pickle # download with pip
+import pickle
 import os
 import time
+
+__author__ = 'wikipedia_project_group'
+
 
 path_to_dump = "/Users/michaelhundt/Desktop/enwiki-20151102-pages-meta-history1"
 
@@ -57,7 +58,7 @@ def extract_edits():
     # read through wiki dump
     with open(path_to_dump) as fp:
         for line in fp:
-            ################ START create a new Page() ################
+            # START create a new Page()
             if "<page>" in line:
                 page_start_time = time.time()
                 start_page = True
@@ -99,10 +100,10 @@ def extract_edits():
                         reset()
                         continue
 
-            ################################# END of a page ##################################
+            # END of a page
             if "</page>" in line:
                 page_end_time = time.time()
-                ########## STORE the page and reset to continue ##########
+                # STORE the page and reset to continue
                 if len(page.revisions) > 1:
                     print('save page "' + page.title + '"')
                     start_page = False
@@ -141,7 +142,7 @@ def extract_edits():
             # store text
             if is_text:
                 revision_text += normalize_text(line)
-                #############################  END of revision: ADD to page   #############################
+                # END of revision: ADD to page
                 if '</text>' in line and len(revision_text) > MIN_CONTENT_SIZE:
                     if has_ip:
                         revision_text = revision_text.replace("</text>", "")
@@ -171,7 +172,6 @@ def extract_edits():
 
                     reset()
 
-
         print(ip_counter)
     end_script_time = time.time()
     print("running time of script: " + str(round(end_script_time - script_start_time, 2)))
@@ -180,8 +180,8 @@ def extract_edits():
 def get_country(ip):
     """
     Get the country from the ip address using geolocator
-    :param ip:
-    :return:
+    :param ip: The actual ip-address
+    :return: The geo-location
     """
     geo_location = get_geo(ip)
     if geo_location is not "None":
@@ -264,7 +264,6 @@ def normalize_text(line):
     for x in closedTag:
         line = re.sub(str('{0}'.format(x)), "", line, re.MULTILINE)
 
-
     # remove all ::+
     line = re.sub('[:][:]+', " ", line, re.MULTILINE)
 
@@ -336,9 +335,6 @@ class Page:
     """
 
     def __init__(self):
-        '''
-        :param title: String
-        '''
         self.title = ""
         self.revisions = []
 
@@ -420,20 +416,20 @@ class Revision:
         self.diff_content = diff
 
     def gef_diff_ratio(self, prev_revision):
-        '''
+        """
         This method calculates the diff_content to the input revision
         :param prev_revision: Class revision
-        '''
+        """
         d = Differ()
         s1 = prev_revision.content
         s2 = self.content
         return SequenceMatcher(lambda x: x == " ", s1, s2).quick_ratio()
 
     def diff(self, prev_revision):
-        '''
+        """
         This method calculates the diff_content to the input revision
         :param prev_revision: Class revision
-        '''
+        """
         d = Differ()
         s1 = prev_revision.content
         s2 = self.content
@@ -442,9 +438,10 @@ class Revision:
 
         if abs(len(s1) - len(s2)) > 3000:
             if len(s2) > 2000 and len(s1) > 1000:
-                lastIndex = 0
+                last_index = 0
+
                 for i in range(math.ceil(len(s2) / 1000)):
-                    s2_i_content = s2[lastIndex:(i + 1) * 1000]
+                    s2_i_content = s2[last_index:(i + 1) * 1000]
                     s2_i_revsision = Revision(self.rev_id,
                                               self.ip,
                                               self.country,
@@ -455,7 +452,7 @@ class Revision:
                         self.diff_content = self.diff_content[:-1]
                     self.diff_content += s2_i_revsision.diff_content
                     self.diff_size += s2_i_revsision.diff_size
-                    lastIndex = (i + 1) * 1000
+                    last_index = (i + 1) * 1000
                 prev_revision.content = None
                 return
 

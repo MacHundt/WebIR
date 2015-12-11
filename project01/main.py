@@ -12,8 +12,8 @@ __author__ = 'wikipedia_project_group'
 
 class MainFrame(tkinter.Frame):
     gmaps_url = "https://www.google.de/maps/place/"
-    result_country = "Andorra"
-    result_confidence = 1.0
+    result_country = ""
+    result_confidence = 0
 
     def __init__(self, master=None):
         tkinter.Frame.__init__(self, master)
@@ -54,9 +54,14 @@ class MainFrame(tkinter.Frame):
 
         just copy the above code under the input_text variable
         """
-        input_text = self.text_box.get(1.0, tkinter.END)
-        probabilities, self.result_country = self.processor.predict_text(input_text)
-        self.open_results()
+        try:
+            input_text = self.text_box.get(1.0, tkinter.END)
+            probabilities, self.result_country = self.processor.predict_text(input_text)
+            self.result_confidence = 1 - probabilities.get(self.result_country)[2]
+
+            self.open_results()
+        except ZeroDivisionError as e:
+            print(e)
 
     def open_results(self):
         results_frame = tkinter.Toplevel(self)
@@ -66,7 +71,7 @@ class MainFrame(tkinter.Frame):
         label_land = tkinter.Label(results_frame, text="Land: " + str(self.result_country))
         label_land.pack()
 
-        label_confidence = tkinter.Label(results_frame, text="Confidence: " + str(self.result_confidence))
+        label_confidence = tkinter.Label(results_frame, text="Confidence: %.2f" % (self.result_confidence * 100) + '%')
         label_confidence.pack()
 
         results_frame.show_map = tkinter.Button(results_frame)
@@ -80,6 +85,7 @@ class MainFrame(tkinter.Frame):
 
 def main():
     root = tkinter.Tk()
+    root.title("Writing Style Predictor")
     app = MainFrame(root)
     app.mainloop()
 

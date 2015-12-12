@@ -57,6 +57,7 @@ def extract_edits():
     # read through wiki dump
     with open(path_to_dump) as fp:
         for line in fp:
+            print(line)
             ################ START create a new Page() ################
             if "<page>" in line:
                 page_start_time = time.time()
@@ -109,7 +110,7 @@ def extract_edits():
                     has_previous = False
                     reset()
                     # page.write_to_XML_file(path_to_learning_data)
-                    page.save_as_serialized_Object(path_to_pickle_objects)
+                    # page.save_as_serialized_Object(path_to_pickle_objects)
                     print("running time for " + page.title + ": " + str(
                         round(page_end_time - page_start_time, 2)) + " sec.\n")
                     continue

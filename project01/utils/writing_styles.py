@@ -31,6 +31,10 @@ def get_difference(gl_writing_style, writing_style):
     gl_mean_tags = gl_writing_style.get_mean_tags()
     tag_differences = deepcopy(writing_style.tag_counts)
 
+    # global dictionary with mean term frequency for every item
+    gl_mean_terms = gl_writing_style.get_mean_terms()
+
+
     for key, value in writing_style.tag_counts.items():
         if gl_mean_tags[key] == 0:
             tag_differences[key] = 0.0
@@ -72,7 +76,7 @@ class WritingStyle:
 
         # Terms without stopwords
         self.term_counter = 0
-        self.revision_term_dictionary = {}
+        self.term_dictionary = {}
         # Count the terms, override self.term_counter and revision_term_dictionary
         self._get_term_counts(text)
 
@@ -96,6 +100,8 @@ class WritingStyle:
 
         return tag_counts
 
+
+
     def _get_term_counts(self, text):
         """
         Removes stopwords and counts the absolute terms and builds up a dictionary
@@ -110,10 +116,11 @@ class WritingStyle:
 
         for term in text_wo_stop:
             self.term_counter += 1
-            if term in self.revision_term_dictionary:
-                self.revision_term_dictionary[term] += 1
+            if term in self.term_dictionary:
+                self.term_dictionary[term] += 1
             else:
-                self.revision_term_dictionary[term] = 1
+                self.term_dictionary[term] = 1
+
 
 
 class GeolocatedWritingStyle:
@@ -135,8 +142,10 @@ class GeolocatedWritingStyle:
         self.mean_sentence_length = writing_style.average_sentence_length
 
         # Term-Frequency: absolute counter of terms and a dictionary,
-        self.term_counter = 0
+        self.term_counter = writing_style.term_counter
         self.term_dictionary = {}
+        self.word_pool = len(writing_style.term_dictionary)
+
 
     def get_mean_tags(self):
         """
@@ -149,6 +158,7 @@ class GeolocatedWritingStyle:
             tag_counts[key] = float(value) / float(self.count)
 
         return tag_counts
+
 
     def add_writing_style(self, writing_style):
         """
@@ -164,12 +174,27 @@ class GeolocatedWritingStyle:
         # Add the tags of the writing-style to the dictionary
         self.tag_counts += writing_style.tag_counts
 
-        self.count += 1
-
         # terms
         self.term_counter = self.term_counter + writing_style.term_counter
-        for term, count in writing_style.revision_term_dictionary.items():
+        for term, count in writing_style.term_dictionary.items():
             if term in self.term_dictionary:
                 self.term_dictionary[term] = self.term_dictionary[term] + count
             else:
                 self.term_dictionary[term] = count
+
+        self.word_pool = (self.word_pool * self.count + len(writing_style.term_dictionary)) / (self.count + 1)
+
+        self.count += 1
+
+
+    def get_mean_terms(self):
+        """
+        Calculates the mean counts of the tags and returns them
+        :return: The mean of the tags
+        """
+        rel_term_dictionary = deepcopy(self.term_dictionary)
+
+        for key, value in rel_term_dictionary.items():
+            rel_term_dictionary[key] = float(value) / float(self.term_counter)
+
+        return rel_term_dictionary

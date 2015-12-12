@@ -31,9 +31,8 @@ def get_difference(gl_writing_style, writing_style):
     gl_mean_tags = gl_writing_style.get_mean_tags()
     tag_differences = deepcopy(writing_style.tag_counts)
 
-    # global dictionary with mean term frequency for every item
-    gl_mean_terms = gl_writing_style.get_mean_terms()
-
+    # global dictionary with mean term frequency for every item (NOT IMPLEMENTED YET)
+    # gl_mean_terms = gl_writing_style.get_mean_terms()
 
     for key, value in writing_style.tag_counts.items():
         if gl_mean_tags[key] == 0:
@@ -184,7 +183,6 @@ class GeolocatedWritingStyle:
         self.word_pool = (self.word_pool * self.count + len(writing_style.term_dictionary)) / (self.count + 1)
 
         self.count += 1
-
 
     def get_mean_terms(self):
         """

@@ -2,8 +2,10 @@
 """
 The file used for the structure of the writing styles.
 Uses writing_style (to install: 'pip install writing_style')
-Uses nltk (to install: 'pip install nltk' and nltk.download('punkt') and nltk.download('averaged_perceptron_tagger')
+Uses nltk (to install: 'pip install nltk' and nltk.download('stopwords')
+nltk.download('punkt') and nltk.download('averaged_perceptron_tagger')
 """
+
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 

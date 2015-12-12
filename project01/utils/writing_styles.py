@@ -102,7 +102,6 @@ class WritingStyle:
         Removes stopwords and counts the absolute terms and builds up a dictionary
         :param text:
         """
-
         # Import punctuation and stopwords
         tokenizer = RegexpTokenizer(r'\w+')
         text = tokenizer.tokenize(text)
@@ -125,7 +124,6 @@ class GeolocatedWritingStyle:
         Initializes the geo-located writing-style.
         :param writing_style: The actual writing-style
         """
-
         # The geo-location
         self.geo_location = writing_style.geo_location
 
@@ -165,12 +163,12 @@ class GeolocatedWritingStyle:
         # Add the tags of the writing-style to the dictionary
         self.tag_counts += writing_style.tag_counts
 
-        self.count += 1
-
-        # terms
+        # Add the terms of the writing-style to the dictionary
         self.term_counter = self.term_counter + writing_style.term_counter
         for term, count in writing_style.revision_term_dictionary.items():
             if term in self.term_dictionary:
                 self.term_dictionary[term] = self.term_dictionary[term] + count
             else:
                 self.term_dictionary[term] = count
+
+        self.count += 1

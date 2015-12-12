@@ -13,9 +13,7 @@ import time
 __author__ = 'wikipedia_project_group'
 
 
-path_to_dump = "/Users/michaelhundt/Desktop/enwiki-20151102-pages-meta-history1"
-path_to_wiki_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history1"
-
+path_to_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history1"
 path_to_learning_data = "../data/xml/"
 path_to_pickle_objects = "../data/pickle/"
 

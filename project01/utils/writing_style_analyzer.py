@@ -103,19 +103,45 @@ class WritingStylePredictor:
 
     def predict_geo_location(self, writing_style):
         """
-        Predicts the geo-location based on the tags
+        Predicts the geo-location based on the different features
         :param writing_style: The actual writing style
         :return: The predicted geo-location
         """
         probabilities = self.get_probabilities(writing_style)
 
-        prediction, prediction_value = '', -1
-        for geo_location, differences in probabilities.items():
-            if prediction_value == -1 or differences[2] < prediction_value:
-                prediction = geo_location
-                prediction_value = differences[2]
+        # Calculates the predictions for each feature (word-length, sentence-length and pos-tags)
+        predictions = ['', '', '']
+        prediction_values = [-1, -1, -1]
 
-        return prediction
+        for geo_location, differences in probabilities.items():
+            for i, v in enumerate(predictions):
+                if prediction_values[i] == -1 or differences[i] < prediction_values[i]:
+                    predictions[i] = geo_location
+                    prediction_values[i] = differences[i]
+
+        # Calculates the likelinesses of the geo-locations
+        likelinesses = {}
+        total_revision_count = 0
+        for gl_writing_style in self.geo_located_writing_styles:
+            total_revision_count += gl_writing_style.count
+
+        for gl_writing_style in self.geo_located_writing_styles:
+            likelinesses[gl_writing_style.geo_location] = gl_writing_style.count / total_revision_count
+
+        # Calculates the most likely geo-location based on the features and on the likelinesses
+        most_likely_index = 0
+        most_likely_value = -1
+        for i, v in enumerate(predictions):
+            if i == 0:
+                most_likely_value = likelinesses.get(v)
+            else:
+                new_value = likelinesses.get(v)
+
+                if new_value > most_likely_value:
+                    most_likely_value = new_value
+                    most_likely_index = i
+
+        return predictions[most_likely_index]
 
 
 def train_writing_style_predictor():

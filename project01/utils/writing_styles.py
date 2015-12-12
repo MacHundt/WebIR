@@ -14,7 +14,7 @@ from copy import deepcopy
 
 __author__ = 'wikipedia_project_group'
 
-MINIMUM_WRITING_STYLES_COUNT = 10
+MINIMUM_WRITING_STYLES_COUNT = 50
 
 
 def get_difference(gl_writing_style, writing_style):
@@ -74,8 +74,10 @@ class WritingStyle:
         self.average_word_length = average_word_lengths(text)
         self.average_sentence_length = average_sentence_lengths(text)
 
-        # Terms without stopwords
+        # Terms without stopwords (THIS FEATURE IS NOT BEING USED YET)
         self.term_counter = 0
+        self.revision_term_dictionary = {}
+
         self.term_dictionary = {}
         # Count the terms, override self.term_counter and revision_term_dictionary
         self._get_term_counts(text)
@@ -100,8 +102,6 @@ class WritingStyle:
 
         return tag_counts
 
-
-
     def _get_term_counts(self, text):
         """
         Removes stopwords and counts the absolute terms and builds up a dictionary
@@ -122,7 +122,6 @@ class WritingStyle:
                 self.term_dictionary[term] = 1
 
 
-
 class GeolocatedWritingStyle:
     """The writing style for a specific geo-location."""
 
@@ -141,11 +140,12 @@ class GeolocatedWritingStyle:
         self.mean_word_length = writing_style.average_word_length
         self.mean_sentence_length = writing_style.average_sentence_length
 
+        # Term-Frequency: absolute counter of terms and a dictionary (THIS FEATURE IS NOT BEING USED YET)
+        self.term_counter = 0
         # Term-Frequency: absolute counter of terms and a dictionary,
         self.term_counter = writing_style.term_counter
         self.term_dictionary = {}
         self.word_pool = len(writing_style.term_dictionary)
-
 
     def get_mean_tags(self):
         """
@@ -173,6 +173,8 @@ class GeolocatedWritingStyle:
 
         # Add the tags of the writing-style to the dictionary
         self.tag_counts += writing_style.tag_counts
+
+        self.count += 1
 
         # terms
         self.term_counter = self.term_counter + writing_style.term_counter

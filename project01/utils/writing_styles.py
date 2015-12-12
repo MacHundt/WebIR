@@ -159,7 +159,6 @@ class GeolocatedWritingStyle:
 
         return tag_counts
 
-
     def add_writing_style(self, writing_style):
         """
         Adds a writing-style.
@@ -174,9 +173,7 @@ class GeolocatedWritingStyle:
         # Add the tags of the writing-style to the dictionary
         self.tag_counts += writing_style.tag_counts
 
-        self.count += 1
-
-        # terms
+        # Add the terms of the writing-style to the dictionary
         self.term_counter = self.term_counter + writing_style.term_counter
         for term, count in writing_style.term_dictionary.items():
             if term in self.term_dictionary:

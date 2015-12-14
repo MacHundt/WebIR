@@ -15,22 +15,34 @@ class MainFrame(tkinter.Frame):
     result_country = ""
     result_confidence = 0
 
+
+    """
+    constructor of the main frame
+    """
     def __init__(self, master=None):
         tkinter.Frame.__init__(self, master)
         self.pack(side="top",
                   fill="both",
                   expand=True)
 
+        "analyze button, text_box for input"
         self.analyze = None
         self.text_box = None
         self.processor = pickle.load(open("data/trained_processor", 'rb'))
 
         self.create_widgets()
 
+
+    """
+    this function loads the widgets into the main frame
+    """
     def create_widgets(self):
         self.create_text_box()
         self.analyse_button()
 
+    """
+    analyse function for the analyse button
+    """
     def analyse_button(self):
         self.analyze = tkinter.Button(self)
         self.analyze["text"] = "Analyze text"
@@ -41,7 +53,9 @@ class MainFrame(tkinter.Frame):
         self.text_box = tkinter.Text()
         self.text_box.pack(side="top",
                            fill="both",
-                           expand="True")
+                           expand="True",
+                           pady=10,
+                           padx=10)
 
     def analyse_func(self):
 
@@ -58,7 +72,7 @@ class MainFrame(tkinter.Frame):
             input_text = self.text_box.get(1.0, tkinter.END)
             probabilities, self.result_country = self.processor.predict_text(input_text)
             self.result_confidence = 1 - probabilities.get(self.result_country)[2]
-
+            print(probabilities , "\n", self.result_confidence , "\n", self.result_country)
             self.open_results()
         except ZeroDivisionError as e:
             print(e)

@@ -1,12 +1,12 @@
-import math
 
 __author__ = 'wikipedia_project_group'
 
+import math
 from geolocator import retrieve_geo_location as get_geo
 from difflib import Differ, SequenceMatcher
 from html2text import html2text  # download with pip
 import re
-import pickle # download with pip
+import pickle
 import os
 import time
 
@@ -427,6 +427,7 @@ class Revision:
         :param prev_revision: Class revision
         """
         d = Differ()
+
         s1 = prev_revision.content
         s2 = self.content
         return SequenceMatcher(lambda x: x == " ", s1, s2).quick_ratio()

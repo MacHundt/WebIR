@@ -152,7 +152,10 @@ def train_writing_style_predictor():
         processor.process_wikipedia_page(page)
         print("Processed: " + page.title)
 
+    # remove dictionary entries that occur only once
+
     pickle.dump(processor, open("../data/trained_processor", 'wb'))
+
 
 if __name__ == '__main__':
     train_writing_style_predictor()

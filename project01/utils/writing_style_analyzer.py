@@ -17,6 +17,7 @@ class WritingStyleProcessor:
 
     def __init__(self):
         self.writing_style_learner = WritingStyleLearner()
+        self.writing_style_predictor = None
 
     def process_wikipedia_page(self, page):
         """
@@ -34,10 +35,10 @@ class WritingStyleProcessor:
         :return: The probabilities and the prediction
         """
         writing_style = WritingStyle(text, None)
-        writing_style_predictor = WritingStylePredictor(self.writing_style_learner)
+        self.writing_style_predictor = WritingStylePredictor(self.writing_style_learner)
 
-        probabilities = writing_style_predictor.get_probabilities(writing_style)
-        predicted_geo_location = writing_style_predictor.predict_geo_location(writing_style)
+        probabilities = self.writing_style_predictor.get_probabilities(writing_style)
+        predicted_geo_location = self.writing_style_predictor.predict_geo_location(writing_style)
 
         return probabilities, predicted_geo_location
 

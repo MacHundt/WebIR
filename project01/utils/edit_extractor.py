@@ -14,7 +14,8 @@ __author__ = 'wikipedia_project_group'
 
 
 path_to_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history1"
-path_to_learning_data = "../data/xml/"
+# training data
+path_to_xml_data = "../data/xml/"
 path_to_pickle_objects = "../data/pickle/"
 
 override = False
@@ -49,7 +50,7 @@ def extract_edits():
     We only use edits with an ip address.
     """
     global revision_text, ip, country, start_revision, stop_revision, has_ip, is_text, \
-        start_page, has_previous, MAX_DIFF_CHARS, path_to_learning_data
+        start_page, has_previous, MAX_DIFF_CHARS, path_to_xml_data
 
     ip_counter = 0
     page_counter = 0

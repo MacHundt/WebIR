@@ -16,7 +16,7 @@ from copy import deepcopy
 
 __author__ = 'wikipedia_project_group'
 
-MINIMUM_WRITING_STYLES_COUNT = 50
+MINIMUM_WRITING_STYLES_COUNT = 75
 
 
 def get_difference(gl_writing_style, writing_style):

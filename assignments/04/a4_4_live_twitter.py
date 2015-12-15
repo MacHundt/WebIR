@@ -38,5 +38,5 @@ if __name__ == '__main__':
     # Filter for keywords
     #stream.filter(track=['Love', 'air'])
 
-    # Filter for location
-    #stream.filter(locations= (-74,40,-73,41))  # New York, WGS 84 projection
+    # Filter for location in WGS 84 projection
+    #stream.filter(locations= (-74,40,-73,41))  # New York

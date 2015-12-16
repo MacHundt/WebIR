@@ -22,15 +22,11 @@ if __name__ == '__main__':
                 break
         detector.close()
         print(detector.result)
-
         sourceEncoding = detector.result['encoding']
+
         source = open(path_in+file_path, 'rb')
-        target = open(path_out+file_path+"_utf-8", "w")
+        target = open(path_out+file_path+"_utf-8", "wb")
 
-        for line in source.readlines():
-            udata = line.decode(sourceEncoding)
-            data = udata.encode(targetEncoding, "ignore")
-            target.write(str(data)+'\n')
-        target.close()
-
+        # convert and write as utf-8
+        target.write(str(source.read(), sourceEncoding).encode(targetEncoding, "ignore"))
 

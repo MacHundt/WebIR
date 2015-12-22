@@ -6,13 +6,11 @@ from tweepy.streaming import StreamListener
 __author__ = 'Bassel Khatib & Michael Hundt'
 
 
+consumer_key = ""
+consumer_secret = ""
 
-
-consumer_key = "pVCg0oEa9s6wk6R8RpgYOpuok"
-consumer_secret = "UfbNG37J8BxYyyykiw00AO3JLCK52006hIbf03J1WHJtFOxdOu"
-
-access_token = "3341183098-GExENkUKQNOSRolnb0g1wlEijy5kjqXRciCsOMs"
-access_token_secret = "qNdwScwMI1JIWqh8xmTshL9m4hieVMbcRRGfYEKxsZTS9"
+access_token = ""
+access_token_secret = ""
 
 
 class StdOutListener(StreamListener):

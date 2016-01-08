@@ -1,6 +1,6 @@
-
-__author__ = 'wikipedia_project_group'
-
+import operator
+from queue import Queue
+import threading
 import math
 from geolocator import retrieve_geo_location as get_geo
 from difflib import Differ, SequenceMatcher
@@ -18,10 +18,12 @@ path_to_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history1"
 path_to_xml_data = "../data/xml/"
 path_to_pickle_objects = "../data/pickle/"
 
-override = False
+override = True
+do_pickle = True
+do_xml = True
 
-MIN_CONTENT_SIZE = 200      # in char
-MAX_DIFF_CHARS = 100        # in char
+MIN_CONTENT_SIZE = 400      # in char
+MAX_DIFF_CHARS = 300        # in char
 
 start_page = False
 revision_text = ""
@@ -75,22 +77,24 @@ def extract_edits():
                 continue
 
             # store text after opening tag to revision text
-            if has_ip:
-                if '<text xml' in line:
-                    is_text = True
-                    temp = line[line.find('>') + 1:]
-                    revision_text += normalize_text(temp)
-                    continue
+            #if has_ip:                                                 ***
+            if '<text xml' in line:
+                is_text = True
+                temp = line[line.find('>') + 1:]
+                revision_text += normalize_text(temp)
+                continue
 
             # cancel the revision
             if start_revision:
+                global country
                 if '<username>' in line:
-                    reset()
-                    continue
+                    country = line.replace("<username>", "")
+                    country = country[0:country.find('<')]
+                #     reset()
+                #     continue
 
                 # get the country from ip
                 if '<ip>' in line:
-                    global country
                     has_ip = True
                     ip_counter += 1
                     ip_last = line.split("<ip>")[1]
@@ -98,9 +102,9 @@ def extract_edits():
                     # cannot find a country
                     if get_country(ip) is not None:
                         country = get_country(ip)
-                    else:
-                        reset()
-                        continue
+                    # else:
+                    #     reset()
+                    #     continue
 
             # END of a page
             if "</page>" in line:
@@ -111,8 +115,10 @@ def extract_edits():
                     start_page = False
                     has_previous = False
                     reset()
-                    # page.write_to_XML_file(path_to_learning_data)
-                    page.save_as_serialized_Object(path_to_pickle_objects)
+                    if do_xml:
+                        page.write_to_XML_file(path_to_xml_data)
+                    if do_pickle:
+                        page.save_as_serialized_Object(path_to_pickle_objects)
                     print("running time for " + page.title + ": " + str(
                         round(page_end_time - page_start_time, 2)) + " sec.\n")
                     continue
@@ -143,36 +149,51 @@ def extract_edits():
 
             # store text
             if is_text:
+
+                if '</text>' in line:
+                    line = line.replace("</text>", "")
+
                 revision_text += normalize_text(line)
                 # END of revision: ADD to page
-                if '</text>' in line and len(revision_text) > MIN_CONTENT_SIZE:
-                    if has_ip:
-                        revision_text = revision_text.replace("</text>", "")
-                        revision = Revision(revision_id, ip, country, revision_text)
-                        revision_id += 1
-                        page.add_revision(revision)
-                        # revision, calculate diff_ratio --> calc diff
-                        if has_previous:
-                            diff_ratio = revision.gef_diff_ratio(prev_revision)
-                            if diff_ratio <= 0.995:
-                                revision.diff(prev_revision)
+
+                # if normalize says its faulty text, it will return empty strings
+                if stop_revision:
+                    if len(revision_text) > MIN_CONTENT_SIZE:
+                        if has_ip:
+
+                            revision = Revision(revision_id, ip, country, revision_text)
+                            revision_id += 1
+                            page.add_revision(revision)
+                            # revision, calculate diff_ratio --> calc diff
+                            if has_previous:
+                                diff_ratio = revision.gef_diff_ratio(prev_revision)
+                                if diff_ratio <= 0.995:
+                                    revision.diff(prev_revision)
+                                    # override content, but remove the current revision
+                                    if len(revision.diff_content) < MAX_DIFF_CHARS:
+                                        prev_revision.set_content(revision.content)
+                                        page.remove_revision(revision.rev_id)
+                                    else:
+                                        prev_revision = revision
+
                                 # override content, but remove the current revision
-                                if len(revision.diff_content) < MAX_DIFF_CHARS:
+                                else:
                                     prev_revision.set_content(revision.content)
                                     page.remove_revision(revision.rev_id)
-                                else:
-                                    prev_revision = revision
-
-                            # override content, but remove the current revision
                             else:
-                                prev_revision.set_content(revision.content)
-                                page.remove_revision(revision.rev_id)
+                                has_previous = True
+                                revision.set_diff_content(revision.content)
+                                prev_revision = revision
+                        # NO IP
                         else:
-                            has_previous = True
-                            revision.set_diff_content(revision.content)
-                            prev_revision = revision
+                            # Change content of previous revision to current content
+                            if prev_revision:
+                                #print(country)     # the username or None
+                                prev_revision.set_content(revision_text)
 
-                    reset()
+                        reset()
+                    else:
+                        reset()
 
 
         print(ip_counter)
@@ -201,13 +222,66 @@ def variety_char_threshold(line, max_diff_chars):
     :param max_diff_chars: int
     :return: True or False
     """
+    global varTest
     alphabet_set = set()
     for char in line:
         if len(alphabet_set) > max_diff_chars:
+            varTest = True
             return True
         if char not in alphabet_set:
             alphabet_set.add(char)
+    varTest = False
     return False
+
+
+def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.02 ):
+    """
+    1) If the most frequent word occurs more than threshold
+    2) Check for items_to_look_at (max: topK) if they occur against ZIPF's Law (with epsilon range)
+
+    :param line: Text
+    :param threshold: 0.38 default, tf / len(dictionary),
+    :param topK: 3 default,
+    :param epsilon:
+    :return: boolean, if abnormal
+    """
+
+    global wordTest
+    word_dic = {}
+    for word in line.split():
+        if word in word_dic.keys():
+            word_dic[word] = word_dic[word] + 1
+        else:
+            word_dic[word] = 1
+
+    word_dic = sorted(word_dic.items(), key=operator.itemgetter(1), reverse=True)
+    top_score = word_dic[0][1]
+
+    # if most frequent word occurs more often than threshold --> abnormal!
+    if (round(top_score / len(word_dic), 2) > threshold):
+        if len(line) > 500:
+            print("Score: ", round(top_score / len(word_dic), 2))
+            print(word_dic)
+            print(line)
+        return True
+
+    # check for items_to_look_at if they occur against ZIPF's Law (with epsilon range)
+    items_to_look_at = int(min(topK, math.ceil(math.log(top_score)), 2))
+    if len(word_dic) < items_to_look_at:
+        print("Items to look at is < length of dictionary")   # --> abnormal!
+        return True
+
+    for i in range(1, items_to_look_at):
+        zipf_score = round((top_score * (1/i)) / len(word_dic) , 2)      # should more or less the frequency of the next tf
+        score = round(word_dic[i][1] / len(word_dic), 2)
+
+        deviation = zipf_score * (1+epsilon) - score
+
+        if deviation < 0:
+            return True
+
+    return False
+
 
 
 def normalize_text(line):
@@ -222,7 +296,7 @@ def normalize_text(line):
     # empty line
     if line is "\n":
         return ""
-    # Irgnore lines with 'strange' start characters
+    # Ignore lines with 'strange' start characters
     if "==" in line[:3]:
         return ""
     if "[[" in line[:4]:
@@ -244,14 +318,19 @@ def normalize_text(line):
     if " | " in line[:4]:
         return ""
 
-    # first 120 chars, 6 different ones
-    if not variety_char_threshold(line[:120], 6):
+
+    # first 140 chars, 7 different ones
+    if not variety_char_threshold(line[:140], 6):
         # print("<6: "+line)
         return ""
-    # words in a sentence - heuristic: 30 words a average of 12 chars
+    # heuristic: 30 words with average length of 12 chars - Then a sentence punctuation must occur
     if len(line) > 360 and not re.search('[;:.!?]', line[:360]):
         # print("Sen_Fault: "+line)
         return ""
+
+    if abnormal_word_frequency(line):
+        return ""
+
 
     line = line.lower()
     if "align=" in line:
@@ -268,7 +347,7 @@ def normalize_text(line):
         line = re.sub(str('{0}'.format(x)), "", line, re.MULTILINE)
 
 
-    # remove all ::+
+    # remove all ::+ ignore \n
     line = re.sub('[:][:]+', " ", line, re.MULTILINE)
 
     line = line.replace("[[", "")
@@ -285,7 +364,7 @@ def normalize_text(line):
     for word in words:
         if word is "\n":
             continue
-        # greater tnan "longest word in english"
+        # greater than "longest word in english"
         if len(word) > 45:
             continue
         if '/' in word or '\\' in word or '|' in word:
@@ -302,7 +381,7 @@ def normalize_text(line):
         # word.replace("ref","")
 
         word = re.sub(preprocess_pattern, '', word)
-        # remove words with - in begining e.g.  -word
+        # replace - with - in beginning e.g.  -word
         if "-" in word[:1]:
             word = " " + word[1:]
         # concat words where first word has - at the end.
@@ -311,6 +390,7 @@ def normalize_text(line):
                 output = output[:-1]
         first = word
         output += word + " "
+
     # some abnormal mistake, remove manual
     if "ref " in output:
         output = output.replace("ref ", " ")

@@ -152,6 +152,7 @@ def extract_edits():
 
                 if '</text>' in line:
                     line = line.replace("</text>", "")
+                    stop_revision = True
 
                 revision_text += normalize_text(line)
                 # END of revision: ADD to page
@@ -187,7 +188,7 @@ def extract_edits():
                         # NO IP
                         else:
                             # Change content of previous revision to current content
-                            if prev_revision:
+                            if has_previous:
                                 #print(country)     # the username or None
                                 prev_revision.set_content(revision_text)
 

@@ -14,13 +14,20 @@ __author__ = 'wikipedia_project_group'
 
 
 path_to_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history1"
+test = "../data/wiki_dump/test_page"
+
+# USE TEST data
+# path_to_dump = test
+
+num_lines = 45000
+
 # training data
 path_to_xml_data = "../data/xml/"
 path_to_pickle_objects = "../data/pickle/"
 
-override = True
+override = False
 do_pickle = True
-do_xml = True
+do_xml = False
 
 MIN_CONTENT_SIZE = 400      # in char
 MAX_DIFF_CHARS = 300        # in char
@@ -38,7 +45,7 @@ has_previous = False
 # create Automates for regex
 text_pattern = re.compile('[a-z]')                      # match text only
 number_pattern = re.compile('[0-9]+(th|st|nd|s|\'s)')   # match 21th, 2nd, 1st, 1990s, ect
-preprocess_pattern = re.compile('[^a-z.?!:]+')          # all NOT text and sentence-end punctuations
+preprocess_pattern = re.compile('[^a-z.\'?!:-]+')          # all NOT text or sentence-end punctuations
 
 tagList = ["b", "em", "i", "small", "strong", "sub", "sup", "ins", "del", "mark", "strike", "u", "href", "ref"]
 openTag = ["<{0}>".format(x) for x in tagList]
@@ -52,16 +59,27 @@ def extract_edits():
     We only use edits with an ip address.
     """
     global revision_text, ip, country, start_revision, stop_revision, has_ip, is_text, \
-        start_page, has_previous, MAX_DIFF_CHARS, path_to_xml_data
+        start_page, has_previous, MAX_DIFF_CHARS, path_to_xml_data, num_lines, test
 
     ip_counter = 0
     page_counter = 0
     revision_id = 0
 
     script_start_time = time.time()
+
+    # test_file = open(test, "w")
+
     # read through wiki dump
     with open(path_to_dump) as fp:
         for line in fp:
+
+            # # Create a test_data
+            # test_file.write(line)
+            # num_lines -= 1
+            # if num_lines == 0:
+            #     test_file.write("</text> \n  </revision> \n </page>")
+            #     test_file.close()
+
             # START create a new Page()
             if "<page>" in line:
                 page_start_time = time.time()
@@ -125,6 +143,7 @@ def extract_edits():
 
             # only continue if the page doesn't exist already
             if start_page:
+
                 if "<title>" in line:
                     title_part = line.split("<title>")[1]
                     title = title_part[:title_part.find("<")]
@@ -170,6 +189,32 @@ def extract_edits():
                                 diff_ratio = revision.gef_diff_ratio(prev_revision)
                                 if diff_ratio <= 0.995:
                                     revision.diff(prev_revision)
+
+                                    # POST-Cleaning!
+                                    diff_text = revision.diff_content
+                                    # first 140 chars, 7 different ones
+                                    if not variety_char_threshold(diff_text[:140], 6):
+                                        if len(diff_text) > 500:
+                                            print("Post-Cleaning: Variety_char")
+                                            print(diff_text)
+                                        diff_text = ""
+
+                                    # # heuristic: 30 words with average length of 12 chars - Then a sentence punctuation must occur
+                                    # if len(diff_text) > 360 and not re.search('[;:.!?]', diff_text[:600]):
+                                    #     if len(diff_text) > 500:
+                                    #         print("Post-Cleaning: Sentence_Punctuation")
+                                    #         print(diff_text)
+                                    #     diff_text = ""
+
+                                    if len(diff_text) > 2 and abnormal_word_frequency(diff_text, threshold=0.4, epsilon=0.2):
+                                        if len(diff_text) > 500:
+                                            print("Post-Cleaning: Abnormal_Word_Freq")
+                                            print(diff_text)
+                                        diff_text = ""
+
+                                    revision.set_diff_content(diff_text)
+
+
                                     # override content, but remove the current revision
                                     if len(revision.diff_content) < MAX_DIFF_CHARS:
                                         prev_revision.set_content(revision.content)
@@ -235,7 +280,7 @@ def variety_char_threshold(line, max_diff_chars):
     return False
 
 
-def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.02 ):
+def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.15 ):
     """
     1) If the most frequent word occurs more than threshold
     2) Check for items_to_look_at (max: topK) if they occur against ZIPF's Law (with epsilon range)
@@ -243,7 +288,7 @@ def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.02 ):
     :param line: Text
     :param threshold: 0.38 default, tf / len(dictionary),
     :param topK: 3 default,
-    :param epsilon:
+    :param epsilon: + 15% range
     :return: boolean, if abnormal
     """
 
@@ -260,10 +305,10 @@ def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.02 ):
 
     # if most frequent word occurs more often than threshold --> abnormal!
     if (round(top_score / len(word_dic), 2) > threshold):
-        if len(line) > 500:
-            print("Score: ", round(top_score / len(word_dic), 2))
-            print(word_dic)
-            print(line)
+        # if len(line) > 500:
+        #     print("Score: ", round(top_score / len(word_dic), 2))
+        #     print(word_dic)
+        #     print(line)
         return True
 
     # check for items_to_look_at if they occur against ZIPF's Law (with epsilon range)
@@ -279,6 +324,9 @@ def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.02 ):
         deviation = zipf_score * (1+epsilon) - score
 
         if deviation < 0:
+            print("ZIPF - Score: ", round(top_score / len(word_dic), 2))
+            print(word_dic)
+            print(line)
             return True
 
     return False
@@ -297,33 +345,12 @@ def normalize_text(line):
     # empty line
     if line is "\n":
         return ""
-    # Ignore lines with 'strange' start characters
-    if "==" in line[:3]:
-        return ""
-    if "[[" in line[:4]:
-        return ""
-    if "*" in line[:2]:
-        return ""
-    if "''" in line[:2]:
-        return ""
-    if "#" in line[:2]:
-        return ""
-    if "{{" in line[:2]:
-        return ""
-    if "&l" in line[:2]:
-        return ""
-    if "---" in line[:5]:
-        return ""
-    if "...." in line[:5]:
-        return ""
-    if " | " in line[:4]:
-        return ""
-
 
     # first 140 chars, 7 different ones
     if not variety_char_threshold(line[:140], 6):
         # print("<6: "+line)
         return ""
+
     # heuristic: 30 words with average length of 12 chars - Then a sentence punctuation must occur
     if len(line) > 360 and not re.search('[;:.!?]', line[:360]):
         # print("Sen_Fault: "+line)
@@ -350,21 +377,30 @@ def normalize_text(line):
 
     # remove all ::+ ignore \n
     line = re.sub('[:][:]+', " ", line, re.MULTILINE)
+    line = re.sub('[\']+', "\'", line)
+    line = line.replace("...", " ")
 
     line = line.replace("[[", "")
     line = line.replace("]]", "")
     line = line.replace("\\", "")
-    line = line.replace("...", " ")
 
     words = line.split()
     # no whitespace in line, only one word, return
     if len(words) < 2:
         return ""
+
     output = ""
     first = words[0]
     for word in words:
         if word is "\n":
             continue
+
+        # Keep the ' in a word . e.g don't
+        if "\'" in word:
+            if not re.match("[a-z]+[\'][a-z]+", word):
+                # print(word, end=' -> ' )
+                word = re.sub('[\']+', "", word)
+                # print(word)
         # greater than "longest word in english"
         if len(word) > 45:
             continue
@@ -373,24 +409,28 @@ def normalize_text(line):
         # remove url
         if "http:" in word or "www." in word:
             continue
+
         if number_pattern.match(word):
-            output += word
+            output += " "+word
             continue
+
         word = word.replace("(", "")
         word = word.replace(")", "")
-        word = word.replace('\n', ' ')
+        word = word.replace('\n', '')
         # word.replace("ref","")
 
+        # now take all none text elements out
         word = re.sub(preprocess_pattern, '', word)
-        # replace - with - in beginning e.g.  -word
+
+        # remove - in beginning e.g.  -word
         if "-" in word[:1]:
-            word = " " + word[1:]
+            word = word[1:]
         # concat words where first word has - at the end.
         if "-" in first[-1:]:
             if first is not word:
                 output = output[:-1]
         first = word
-        output += word + " "
+        output += " "+word
 
     # some abnormal mistake, remove manual
     if "ref " in output:
@@ -523,27 +563,27 @@ class Revision:
         s1 = prev_revision.content
         s2 = self.content
 
-        # if diff text is too big, cut it into smaller chunks to avoid Errors
+        # if diff text is too big, cut it into smaller chunks to avoid Errors --> brought errors :(
 
-        if abs(len(s1) - len(s2)) > 3000:
-            if len(s2) > 2000 and len(s1) > 1000:
-                last_index = 0
-
-                for i in range(math.ceil(len(s2) / 1000)):
-                    s2_i_content = s2[last_index:(i + 1) * 1000]
-                    s2_i_revsision = Revision(self.rev_id,
-                                              self.ip,
-                                              self.country,
-                                              s2_i_content,
-                                              keep_content=True)
-                    s2_i_revsision.diff(prev_revision)
-                    if self.diff_content:
-                        self.diff_content = self.diff_content[:-1]
-                    self.diff_content += s2_i_revsision.diff_content
-                    self.diff_size += s2_i_revsision.diff_size
-                    last_index = (i + 1) * 1000
-                prev_revision.content = None
-                return
+        # if abs(len(s1) - len(s2)) > 3000:
+        #     if len(s2) > 2000 and len(s1) > 1000:
+        #         last_index = 0
+        #
+        #         for i in range(math.ceil(len(s2) / 1000)):
+        #             s2_i_content = s2[last_index:(i + 1) * 1000]
+        #             s2_i_revsision = Revision(self.rev_id,
+        #                                       self.ip,
+        #                                       self.country,
+        #                                       s2_i_content,
+        #                                       keep_content=True)
+        #             s2_i_revsision.diff(prev_revision)
+        #             if self.diff_content:
+        #                 self.diff_content = self.diff_content[:-1]
+        #             self.diff_content += s2_i_revsision.diff_content
+        #             self.diff_size += s2_i_revsision.diff_size
+        #             last_index = (i + 1) * 1000
+        #         prev_revision.content = None
+        #         return
 
         diff = list(d.compare(s1.split(" "), s2.split(" ")))
 

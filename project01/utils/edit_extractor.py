@@ -280,13 +280,13 @@ def variety_char_threshold(line, max_diff_chars):
     return False
 
 
-def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.15 ):
+def abnormal_word_frequency(line, threshold=0.25, topK=5, epsilon=0.15 ):
     """
     1) If the most frequent word occurs more than threshold
     2) Check for items_to_look_at (max: topK) if they occur against ZIPF's Law (with epsilon range)
 
     :param line: Text
-    :param threshold: 0.38 default, tf / len(dictionary),
+    :param threshold: 0.25 default, tf / len(dictionary),
     :param topK: 3 default,
     :param epsilon: + 15% range
     :return: boolean, if abnormal
@@ -294,7 +294,9 @@ def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.15 ):
 
     global wordTest
     word_dic = {}
+    word_count = 0
     for word in line.split():
+        word_count += 1
         if word in word_dic.keys():
             word_dic[word] = word_dic[word] + 1
         else:
@@ -304,11 +306,11 @@ def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.15 ):
     top_score = word_dic[0][1]
 
     # if most frequent word occurs more often than threshold --> abnormal!
-    if (round(top_score / len(word_dic), 2) > threshold):
-        # if len(line) > 500:
-        #     print("Score: ", round(top_score / len(word_dic), 2))
-        #     print(word_dic)
-        #     print(line)
+    if (round(top_score / word_count, 2) > threshold):
+        if len(line) > 500:
+            print("Score: ", round(top_score / word_count, 2))
+            print(word_dic)
+            print(line)
         return True
 
     # check for items_to_look_at if they occur against ZIPF's Law (with epsilon range)
@@ -318,13 +320,13 @@ def abnormal_word_frequency(line, threshold=0.38, topK=5, epsilon=0.15 ):
         return True
 
     for i in range(1, items_to_look_at):
-        zipf_score = round((top_score * (1/i)) / len(word_dic) , 2)      # should more or less the frequency of the next tf
-        score = round(word_dic[i][1] / len(word_dic), 2)
+        zipf_score = round((top_score * (1/i)) / word_count, 2)      # should more or less be the frequency of the next tf
+        score = round(word_dic[i][1] / word_count, 2)
 
         deviation = zipf_score * (1+epsilon) - score
 
         if deviation < 0:
-            print("ZIPF - Score: ", round(top_score / len(word_dic), 2))
+            print("ZIPF - Score: ", round(top_score / word_count, 2))
             print(word_dic)
             print(line)
             return True

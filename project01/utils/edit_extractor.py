@@ -292,7 +292,6 @@ def abnormal_word_frequency(line, threshold=0.25, topK=5, epsilon=0.15 ):
     :return: boolean, if abnormal
     """
 
-    global wordTest
     word_dic = {}
     word_count = 0
     for word in line.split():

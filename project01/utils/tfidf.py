@@ -7,8 +7,9 @@ from sklearn.pipeline import FeatureUnion
 
 from sklearn.metrics import confusion_matrix
 import pandas as pd
-import pylab as pl
+import matplotlib.pylab as pl
 from sklearn.cross_validation import train_test_split
+import sys
 
 from os import listdir
 from os.path import isfile, join
@@ -47,6 +48,9 @@ def load_corpus(input_dir):
     train_set = []
 
     for f in train_files:
+        if f == ".DS_Store":
+            continue
+
         label = f
         df = pd.read_csv(input_dir + "/" + f, sep="\t", dtype={'id': object, 'text': object})
 
@@ -66,9 +70,9 @@ def train_model(train_set):
     # Create two blocks of features, word anc character n-grams, size of 2
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
-    char_vector = TfidfVectorizer(ngram_range=(2, 3), analyzer="char", binary=False, min_df=0, max_features=2000)
+    char_vector = TfidfVectorizer(ngram_range=(2, 2), analyzer="char", binary=False, min_df=0, max_features=2000)
 
-    # Our vectors are the feature union of word/char ngrams
+    # Our vectors are the feature union of word/char n-grams
     vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
 
     # Corpus is a list with the n-word chunks
@@ -81,6 +85,7 @@ def train_model(train_set):
         corpus.append(item['text'])
         classes.append(item['label'])
 
+    print("size of corpus: " + str(sys.getsizeof(corpus)))
     print("num of training instances: ", len(classes))
     print("num of training classes: ", len(set(classes)))
 
@@ -101,6 +106,9 @@ def train_model(train_set):
 
     print(cm)
 
+    fscore = (2 * cm[0][0]) / ((2 * cm[0][0]) + cm[1][0] + cm[0][1])
+    print("f-score: " + str(fscore))
+
     pl.matshow(cm)
     pl.title('Confusion matrix')
     pl.colorbar()
@@ -110,7 +118,7 @@ def train_model(train_set):
 
 
 if __name__ == '__main__':
-    corpora = load_corpus("./corpus")
+    corpora = load_corpus("../data/corpora")
 
     print(len(corpora), corpora[0:10])
 

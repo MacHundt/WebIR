@@ -194,9 +194,9 @@ def extract_edits():
                                     diff_text = revision.diff_content
                                     # first 140 chars, 7 different ones
                                     if not variety_char_threshold(diff_text[:140], 6):
-                                        if len(diff_text) > 500:
-                                            print("Post-Cleaning: Variety_char")
-                                            print(diff_text)
+                                        # if len(diff_text) > 500:
+                                        #     print("Post-Cleaning: Variety_char")
+                                        #     print(diff_text)
                                         diff_text = ""
 
                                     # # heuristic: 30 words with average length of 12 chars - Then a sentence punctuation must occur
@@ -207,9 +207,9 @@ def extract_edits():
                                     #     diff_text = ""
 
                                     if len(diff_text) > 2 and abnormal_word_frequency(diff_text, threshold=0.4, epsilon=0.2):
-                                        if len(diff_text) > 500:
-                                            print("Post-Cleaning: Abnormal_Word_Freq")
-                                            print(diff_text)
+                                        # if len(diff_text) > 500:
+                                        #     print("Post-Cleaning: Abnormal_Word_Freq")
+                                        #     print(diff_text)
                                         diff_text = ""
 
                                     revision.set_diff_content(diff_text)
@@ -306,10 +306,10 @@ def abnormal_word_frequency(line, threshold=0.25, topK=5, epsilon=0.15 ):
 
     # if most frequent word occurs more often than threshold --> abnormal!
     if (round(top_score / word_count, 2) > threshold):
-        if len(line) > 500:
-            print("Score: ", round(top_score / word_count, 2))
-            print(word_dic)
-            print(line)
+        # if len(line) > 500:
+        #     print("Score: ", round(top_score / word_count, 2))
+        #     print(word_dic)
+        #     print(line)
         return True
 
     # check for items_to_look_at if they occur against ZIPF's Law (with epsilon range)

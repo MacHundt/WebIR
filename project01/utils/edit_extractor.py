@@ -13,7 +13,7 @@ import time
 __author__ = 'wikipedia_project_group'
 
 
-path_to_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history1"
+path_to_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history2"
 test = "../data/wiki_dump/test_page"
 
 # USE TEST data
@@ -151,6 +151,13 @@ def extract_edits():
                     path_to_file = path_to_pickle_objects + title
                     print('"' + title + '" ...', end='')
 
+                    if title == "Bulgaria":
+                        print("SKIP ... because of diff Error")
+                        start_page = False
+                        has_previous = False
+                        reset()
+                        continue
+
                     if not override and os.path.isfile(path_to_file):
                         print(" exists already")
                         start_page = False
@@ -214,7 +221,6 @@ def extract_edits():
 
                                     revision.set_diff_content(diff_text)
 
-
                                     # override content, but remove the current revision
                                     if len(revision.diff_content) < MAX_DIFF_CHARS:
                                         prev_revision.set_content(revision.content)
@@ -240,7 +246,6 @@ def extract_edits():
                         reset()
                     else:
                         reset()
-
 
         print(ip_counter)
     end_script_time = time.time()

@@ -70,7 +70,7 @@ def train_model(train_set):
     # Create two blocks of features, word anc character n-grams, size of 2
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
-    char_vector = TfidfVectorizer(ngram_range=(2, 2), analyzer="char", binary=False, min_df=0, max_features=2000)
+    char_vector = TfidfVectorizer(ngram_range=(2, 3), analyzer="char", binary=False, min_df=0, max_features=2000)
 
     # Our vectors are the feature union of word/char n-grams
     vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
@@ -100,7 +100,7 @@ def train_model(train_set):
 
     model = LinearSVC(loss='l1', dual=True)
 
-    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=0)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
     y_prediction = model.fit(x_train, y_train).predict(x_test)
     cm = confusion_matrix(y_test, y_prediction)
 

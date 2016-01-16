@@ -18,7 +18,7 @@ def read_pickles(input_dir, corpus_dir):
     countries_id_dic = {}
 
     for f in train_files:
-        if "Talk:" in f:
+        if "Talk:" in f or ".DS_Store" in f:
             continue
 
         page = pickle.load(open(input_dir + f, 'rb'))
@@ -47,7 +47,7 @@ def read_pickles(input_dir, corpus_dir):
                     file.write("id\ttext\n")
                     file.write(str(countries_id_dic[country]) + '\t' + revision.diff_content + '\n')
 
-
+    print("Finished")
 
 if __name__ == '__main__':
     corpora = read_pickles("../data/pickle/", "../data/corpora/countries/" )

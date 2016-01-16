@@ -4,6 +4,8 @@ import numpy as np
 
 import nltk
 
+import pickle
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import FeatureUnion
@@ -79,7 +81,7 @@ def train_model(train_set):
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
     char_vector = TfidfVectorizer(ngram_range=(2, 3), analyzer="char", binary=False, min_df=0, max_features=2000)
-    #tag_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000, decode_error='ignore')
+    # tag_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000, decode_error='ignore')
 
     # Our vectors are the feature union of word/char n-grams
     vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
@@ -88,7 +90,7 @@ def train_model(train_set):
     corpus = []
     # Classes is the labels of each chunk
     classes = []
-    # Tags
+    # The tags of the n-word chunks
     # tags = []
 
     # Load training sets, for males & females
@@ -120,9 +122,13 @@ def train_model(train_set):
     y_prediction = model.fit(x_train, y_train).predict(x_test)
     cm = confusion_matrix(y_test, y_prediction)
 
+    print("saving model")
+
+    pickle.dump(model, '../data/trained_model', 'wb')
+
     print(cm)
 
-    # Calculate the precision
+    # Calculate the accuracy
     diagonal = 0
     rest = 0
     for i, _ in enumerate(cm):
@@ -132,7 +138,7 @@ def train_model(train_set):
             else:
                 rest += cm[i][j]
 
-    print("precision: " + str((1 - (rest / (diagonal + rest))) * 100) + '%')
+    print("accuracy: " + str((1 - (rest / (diagonal + rest))) * 100) + '%')
 
     pl.matshow(cm)
     pl.title('Confusion matrix')

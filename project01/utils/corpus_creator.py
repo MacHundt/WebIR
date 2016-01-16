@@ -14,14 +14,14 @@ def read_pickles(input_dir, corpus_dir):
     countries_id_dic = {}
 
     for f in train_files:
-        if "Talk:" in f:
+        if "Talk:" in f or ".DS_Store" in f:
             continue
 
         page = pickle.load(open(input_dir + f, 'rb'))
         for revision in page.revisions:
             country = revision.country
 
-            if '\t' in country:
+            if "  " in country:
                 continue
 
             if country not in countries_id_dic.keys():

@@ -1,14 +1,20 @@
 """The file used for the writing-style-analyzation."""
 
 import numpy as np
+
+import nltk
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import FeatureUnion
-
 from sklearn.metrics import confusion_matrix
-import pandas as pd
-import matplotlib.pylab as pl
 from sklearn.cross_validation import train_test_split
+
+from scipy.sparse import hstack
+import pandas as pd
+
+import matplotlib.pylab as pl
+
 import sys
 
 from os import listdir
@@ -60,6 +66,11 @@ def load_corpus(input_dir):
     return train_set
 
 
+def pos_tags(txt):
+    tokens = nltk.word_tokenize(txt)
+    return " ".join([tag for (word, tag) in nltk.pos_tag(tokens)])
+
+
 def train_model(train_set):
     """
     Train the models, using 10-fold-cv and LibLinear classification.
@@ -68,6 +79,7 @@ def train_model(train_set):
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
     char_vector = TfidfVectorizer(ngram_range=(2, 3), analyzer="char", binary=False, min_df=0, max_features=2000)
+    tag_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000, decode_error='ignore')
 
     # Our vectors are the feature union of word/char n-grams
     vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
@@ -76,18 +88,24 @@ def train_model(train_set):
     corpus = []
     # Classes is the labels of each chunk
     classes = []
+    # Tags
+    tags = []
 
     # Load training sets, for males & females
     for item in train_set:
         corpus.append(item['text'])
         classes.append(item['label'])
+        tags.append(pos_tags(item['text']))
 
     print("size of corpus: " + str(sys.getsizeof(corpus)))
     print("num of training instances: ", len(classes))
     print("num of training classes: ", len(set(classes)))
 
     # Fit the model of tf-idf vectors for the corpus
-    matrix = vectorizer.fit_transform(corpus)
+    X1 = vectorizer.fit_transform(corpus)
+    X2 = tag_vector.fit_transform(tags)
+
+    matrix = hstack((X1, X2), format='csr')
 
     print("num of features: ", len(vectorizer.get_feature_names()))
     print("training model")

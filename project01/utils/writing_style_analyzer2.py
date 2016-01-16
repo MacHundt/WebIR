@@ -14,12 +14,11 @@ import sys
 from os import listdir
 from os.path import isfile, join
 
-"""
-Open the file, remove mentions & links,  split it in  chunks of n words and return the n-word block
-"""
-
 
 def split_word_batches(filename, size_of_chunk=100):
+    """
+    Open the file, remove mentions & links,  split it in  chunks of n words and return the n-word block
+    """
     with open(filename, "r") as f:
         lines = f.readlines()
         text = ""
@@ -61,12 +60,10 @@ def load_corpus(input_dir):
     return train_set
 
 
-"""
-Train the models, using 10-fold-cv and LibLinear classification.
-"""
-
-
 def train_model(train_set):
+    """
+    Train the models, using 10-fold-cv and LibLinear classification.
+    """
     # Create two blocks of features, word anc character n-grams, size of 2
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)

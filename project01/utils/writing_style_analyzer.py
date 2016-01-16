@@ -4,6 +4,8 @@ import numpy as np
 
 import nltk
 
+import pickle
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import FeatureUnion
@@ -79,7 +81,7 @@ def train_model(train_set):
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
     char_vector = TfidfVectorizer(ngram_range=(2, 3), analyzer="char", binary=False, min_df=0, max_features=2000)
-    tag_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000, decode_error='ignore')
+    # tag_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000, decode_error='ignore')
 
     # Our vectors are the feature union of word/char n-grams
     vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
@@ -88,24 +90,25 @@ def train_model(train_set):
     corpus = []
     # Classes is the labels of each chunk
     classes = []
-    # Tags
-    tags = []
+    # The tags of the n-word chunks
+    # tags = []
 
     # Load training sets, for males & females
     for item in train_set:
         corpus.append(item['text'])
         classes.append(item['label'])
-        tags.append(pos_tags(item['text']))
+        # tags.append(pos_tags(item['text']))
 
     print("size of corpus: " + str(sys.getsizeof(corpus)))
     print("num of training instances: ", len(classes))
     print("num of training classes: ", len(set(classes)))
 
     # Fit the model of tf-idf vectors for the corpus
-    X1 = vectorizer.fit_transform(corpus)
-    X2 = tag_vector.fit_transform(tags)
+    # X1 = vectorizer.fit_transform(corpus)
+    # X2 = tag_vector.fit_transform(tags)
 
-    matrix = hstack((X1, X2), format='csr')
+    matrix = vectorizer.fit_transform(corpus)
+    # matrix = hstack((X1, X2), format='csr')
 
     print("num of features: ", len(vectorizer.get_feature_names()))
     print("training model")
@@ -119,10 +122,23 @@ def train_model(train_set):
     y_prediction = model.fit(x_train, y_train).predict(x_test)
     cm = confusion_matrix(y_test, y_prediction)
 
+    print("saving model")
+
+    pickle.dump(model, '../data/trained_model', 'wb')
+
     print(cm)
 
-    fscore = (2 * cm[0][0]) / ((2 * cm[0][0]) + cm[1][0] + cm[0][1])
-    print("f-score: " + str(fscore))
+    # Calculate the accuracy
+    diagonal = 0
+    rest = 0
+    for i, _ in enumerate(cm):
+        for j, _ in enumerate(cm[i]):
+            if i == j:
+                diagonal += cm[i][j]
+            else:
+                rest += cm[i][j]
+
+    print("accuracy: " + str((1 - (rest / (diagonal + rest))) * 100) + '%')
 
     pl.matshow(cm)
     pl.title('Confusion matrix')
@@ -134,7 +150,5 @@ def train_model(train_set):
 
 if __name__ == '__main__':
     corpora = load_corpus("../data/countries")
-
-    print(len(corpora), corpora[0:10])
 
     train_model(corpora)

@@ -115,7 +115,7 @@ def train_model(train_set):
 
 
 if __name__ == '__main__':
-    corpora = load_corpus("../data/corpora")
+    corpora = load_corpus("../data/countries")
 
     print(len(corpora), corpora[0:10])
 

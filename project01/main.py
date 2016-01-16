@@ -5,7 +5,7 @@ import tkinter
 import webbrowser
 import pickle
 
-from utils.writing_style_analyzer import WritingStyleProcessor, WritingStyleLearner
+from utils.writing_style_analyzer1 import WritingStyleProcessor, WritingStyleLearner
 
 __author__ = 'wikipedia_project_group'
 

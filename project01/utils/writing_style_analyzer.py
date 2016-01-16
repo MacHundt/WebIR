@@ -1,162 +1,122 @@
-# coding: utf-8
-"""
-The file used for the writing style analysis.
-"""
+"""The file used for the writing-style-analyzation."""
 
-from writing_styles import WritingStyle, GeolocatedWritingStyle, get_difference, MINIMUM_WRITING_STYLES_COUNT
-from edit_extractor import Page, Revision
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import LinearSVC
+from sklearn.pipeline import FeatureUnion
 
-import pickle
-import os.path
+from sklearn.metrics import confusion_matrix
+import pandas as pd
+import matplotlib.pylab as pl
+from sklearn.cross_validation import train_test_split
+import sys
 
-__author__ = 'wikipedia_project_group'
-
-
-class WritingStyleProcessor:
-    """Processes wikipedia pages, determines (geo-located) writing styles and predicts writing styles."""
-
-    def __init__(self):
-        self.writing_style_learner = WritingStyleLearner()
-        self.writing_style_predictor = None
-
-    def process_wikipedia_page(self, page):
-        """
-        Processes a single wikipedia page.
-        :param page: The actual page
-        """
-        for revision in page.revisions:
-            writing_style = WritingStyle(revision.diff_content, revision.country)
-            self.writing_style_learner.add_writing_style(writing_style)
-
-    def predict_text(self, text):
-        """
-        Gets the geo-location-probabilities and the geo-location-prediction for a text.
-        :param text: The actual text
-        :return: The probabilities and the prediction
-        """
-        writing_style = WritingStyle(text, None)
-        self.writing_style_predictor = WritingStylePredictor(self.writing_style_learner)
-
-        probabilities = self.writing_style_predictor.get_probabilities(writing_style)
-        predicted_geo_location = self.writing_style_predictor.predict_geo_location(writing_style)
-
-        return probabilities, predicted_geo_location
-
-    def get_geo_located_writing_styles(self):
-        """
-        Only returns the geo-located writing styles that contain a certain threshold of texts.
-        :return: The geo-located writing styles
-        """
-        filtered = []
-
-        for gl_writing_style in self.writing_style_learner.geo_located_writing_styles:
-            if gl_writing_style.count >= MINIMUM_WRITING_STYLES_COUNT:
-                filtered.append(gl_writing_style)
-
-        return filtered
+from os import listdir
+from os.path import isfile, join
 
 
-class WritingStyleLearner:
-    """Learns the mean writing style for different geo-locations."""
+def split_word_batches(filename, size_of_chunk=100):
+    """
+    Open the file, remove mentions & links,  split it in  chunks of n words and return the n-word block
+    """
+    with open(filename, "r") as f:
+        lines = f.readlines()
+        text = ""
+    for l in lines:
+        tokens = l.strip().split()
+        if len(tokens) > 1:
+            text += " " + tokens[1]
 
-    def __init__(self):
-        # Creates and empty list of geo-located writing styles
-        self.geo_located_writing_styles = []
+    text = text.decode('utf-8').lower().split()
+    text = [word for word in text if word[0] != "@" and 'http' not in word[0:4] and word[0] != '#']
+    start = 0
+    end = start + size_of_chunk
 
-    def add_writing_style(self, writing_style):
-        """
-        Adds a writing style to the learner
-        :param writing_style: The actual writing style
-        """
-        found = False
-        for i, v in enumerate(self.geo_located_writing_styles):
-            if self.geo_located_writing_styles[i].geo_location == writing_style.geo_location:
-                self.geo_located_writing_styles[i].add_writing_style(writing_style)
-                found = True
-                break
+    while True:
+        start = end
+        end = start + size_of_chunk
 
-        if not found:
-            gl_writing_style = GeolocatedWritingStyle(writing_style)
-            self.geo_located_writing_styles.append(gl_writing_style)
+        if end >= len(text):
+            break
 
-
-class WritingStylePredictor:
-    """Predicts the geo-location for a given writing style."""
-
-    def __init__(self, writing_style_learner):
-        self.geo_located_writing_styles = writing_style_learner.geo_located_writing_styles
-
-    def get_probabilities(self, writing_style):
-        """
-        Gets the probabilities of the geo-locations for a given writing style
-        :param writing_style: The actual writing style
-        :return: The probabilities of the geo-locations
-        """
-        probabilities = {}
-
-        for gl_writing_style in self.geo_located_writing_styles:
-            difference = get_difference(gl_writing_style, writing_style)
-
-            if difference is not None:
-                probabilities[gl_writing_style.geo_location] = difference
-
-        return probabilities
-
-    def predict_geo_location(self, writing_style):
-        """
-        Predicts the geo-location based on the different features
-        :param writing_style: The actual writing style
-        :return: The predicted geo-location
-        """
-        probabilities = self.get_probabilities(writing_style)
-
-        # Calculates the predictions for each feature (word-length, sentence-length and pos-tags)
-        predictions = ['', '', '']
-        prediction_values = [-1, -1, -1]
-
-        for geo_location, differences in probabilities.items():
-            for i, v in enumerate(predictions):
-                if prediction_values[i] == -1 or differences[i] < prediction_values[i]:
-                    predictions[i] = geo_location
-                    prediction_values[i] = differences[i]
-
-        # Calculates the likelinesses of the geo-locations
-        likelinesses = {}
-        total_revision_count = 0
-        for gl_writing_style in self.geo_located_writing_styles:
-            total_revision_count += gl_writing_style.count
-
-        for gl_writing_style in self.geo_located_writing_styles:
-            likelinesses[gl_writing_style.geo_location] = gl_writing_style.count / total_revision_count
-
-        # Calculates the most likely geo-location based on the features and on the likelinesses
-        most_likely_index = 0
-        most_likely_value = -1
-        for i, v in enumerate(predictions):
-            if i == 0:
-                most_likely_value = likelinesses.get(v)
-            else:
-                new_value = likelinesses.get(v)
-
-                if new_value > most_likely_value:
-                    most_likely_value = new_value
-                    most_likely_index = i
-
-        return predictions[most_likely_index]
+        yield ' '.join(text[start:end])
 
 
-def train_writing_style_predictor():
-    processor = WritingStyleProcessor()
+def load_corpus(input_dir):
+    train_files = [f for f in listdir(input_dir) if isfile(join(input_dir, f))]
+    train_set = []
 
-    for file_name in os.listdir("../data/pickle"):
-        page = pickle.load(open("../data/pickle/" + file_name, 'rb'))
-        processor.process_wikipedia_page(page)
-        print("Processed: " + page.title)
+    for f in train_files:
+        if f == ".DS_Store":
+            continue
 
-    # remove dictionary entries that occur only once
+        label = f
+        df = pd.read_csv(input_dir + "/" + f, sep="\t", dtype={'id': object, 'text': object})
 
-    pickle.dump(processor, open("../data/trained_processor", 'wb'))
+        for row in df['text']:
+            if type(row) is str:
+                train_set.append({"label": label, "text": row})
+
+    return train_set
+
+
+def train_model(train_set):
+    """
+    Train the models, using 10-fold-cv and LibLinear classification.
+    """
+    # Create two blocks of features, word anc character n-grams, size of 2
+    # We can also append here multiple other features in general
+    word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
+    char_vector = TfidfVectorizer(ngram_range=(2, 3), analyzer="char", binary=False, min_df=0, max_features=2000)
+
+    # Our vectors are the feature union of word/char n-grams
+    vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
+
+    # Corpus is a list with the n-word chunks
+    corpus = []
+    # Classes is the labels of each chunk
+    classes = []
+
+    # Load training sets, for males & females
+    for item in train_set:
+        corpus.append(item['text'])
+        classes.append(item['label'])
+
+    print("size of corpus: " + str(sys.getsizeof(corpus)))
+    print("num of training instances: ", len(classes))
+    print("num of training classes: ", len(set(classes)))
+
+    # Fit the model of tf-idf vectors for the corpus
+    matrix = vectorizer.fit_transform(corpus)
+
+    print("num of features: ", len(vectorizer.get_feature_names()))
+    print("training model")
+
+    x = matrix.toarray()
+    y = np.asarray(classes)
+
+    model = LinearSVC(loss='l1', dual=True)
+
+    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
+    y_prediction = model.fit(x_train, y_train).predict(x_test)
+    cm = confusion_matrix(y_test, y_prediction)
+
+    print(cm)
+
+    fscore = (2 * cm[0][0]) / ((2 * cm[0][0]) + cm[1][0] + cm[0][1])
+    print("f-score: " + str(fscore))
+
+    pl.matshow(cm)
+    pl.title('Confusion matrix')
+    pl.colorbar()
+    pl.ylabel('True label')
+    pl.xlabel('Predicted label')
+    pl.show()
 
 
 if __name__ == '__main__':
-    train_writing_style_predictor()
+    corpora = load_corpus("../data/countries")
+
+    print(len(corpora), corpora[0:10])
+
+    train_model(corpora)

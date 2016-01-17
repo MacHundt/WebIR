@@ -46,4 +46,3 @@ def read_pickles(input_dir, corpus_dir):
 
 if __name__ == '__main__':
     read_pickles("../data/pickle/", "../data/countries/")
-

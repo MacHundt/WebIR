@@ -170,7 +170,9 @@ def train_model(train_set):
     pl.title('Confusion matrix')
     pl.colorbar()
     pl.ylabel('True label')
-    pl.xlabel('Predicted label')
+    # pl.xlabel('Predicted label')
+    global train_files
+    pl.xlabel(train_files)
     pl.show()
 
 

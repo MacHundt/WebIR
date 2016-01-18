@@ -156,8 +156,7 @@ def predict_geo_location(text, path='../data/model/'):
     return y_prediction[0]
 
 if __name__ == '__main__':
-    if not isfile('../data/model/trained_model') or not isfile('../data/model/vectorizer') \
-            or not isfile('../data/model/tag_vector'):
+    if not isfile('../data/model/trained_model') or not isfile('../data/model/vectorizer'):
         corpora = load_corpus("../data/countries")
         train_model(corpora)
 

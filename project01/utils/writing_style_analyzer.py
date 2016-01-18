@@ -1,4 +1,5 @@
 """The file used for the writing-style-analyzation."""
+import os
 
 import numpy as np
 
@@ -58,12 +59,16 @@ def load_corpus(directory):
     :param directory: The actual directory
     :return: Returns the train-set
     """
+    global train_files
     train_files = [f for f in listdir(directory) if isfile(join(directory, f))]
     train_set = {}
 
+    if ".DS_Store" in train_files:
+        train_files.remove(".DS_Store")
+
     for f in train_files:
-        if f == ".DS_Store":
-            continue
+
+        size_of_file = os.path.getsize(directory+"/"+f)
 
         train_set[f] = []
 

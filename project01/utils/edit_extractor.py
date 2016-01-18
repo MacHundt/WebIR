@@ -52,7 +52,7 @@ openTag = ["<{0}>".format(x) for x in tagList]
 closedTag = ["</{0}>".format(x) for x in tagList]
 
 
-def extract_edits():
+def extract_edits(start_at=0):
     """
     The edit extractor uses a widipedia dump file to extract the edits of a page and maps them to a geo location.
     The diff-content to the previous edit is calculated and stored, if it is big enough.
@@ -71,7 +71,12 @@ def extract_edits():
 
     # read through wiki dump
     with open(path_to_dump) as fp:
-        for line in fp:
+        for linecount, line in enumerate(fp):
+
+            # skip start_at lines
+            if start_at > 0:
+                start_at -= 1
+                continue
 
             # # Create a test_data
             # test_file.write(line)
@@ -149,7 +154,7 @@ def extract_edits():
                     title = title_part[:title_part.find("<")]
                     title = re.sub('[/ ]', "_", title)
                     path_to_file = path_to_pickle_objects + title
-                    print('"' + title + '" ...', end='')
+                    print('Starting"' + title + '" at line '+str(linecount)+" ... ", end='')
 
                     if title == "Bulgaria":
                         print("SKIP ... because of diff Error")

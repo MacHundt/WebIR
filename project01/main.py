@@ -3,8 +3,7 @@
 
 import tkinter
 import webbrowser
-
-from utils.writing_style_analyzer import predict_geo_location
+import writing_style_analyzer
 
 __author__ = 'wikipedia_project_group'
 
@@ -66,7 +65,7 @@ class MainFrame(tkinter.Frame):
         """
         try:
             input_text = self.text_box.get(1.0, tkinter.END)
-            self.result_country = predict_geo_location(input_text)
+            self.result_country = writing_style_analyzer.predict_geo_location(input_text, 'data/model/')
             self.result_confidence = 0
 
             self.open_results()
@@ -96,7 +95,7 @@ class MainFrame(tkinter.Frame):
 def main():
     root = tkinter.Tk()
     root.title("Writing Style Predictor")
-    app = MainFrame(root)
+    app = MainFrame()
     app.mainloop()
 
 if __name__ == '__main__':

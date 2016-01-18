@@ -1,6 +1,4 @@
 """The file used for the writing-style-analyzation."""
-import os
-
 import numpy as np
 
 import nltk
@@ -10,47 +8,17 @@ import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import FeatureUnion
-from sklearn.metrics import confusion_matrix
-from sklearn.cross_validation import train_test_split
+# from sklearn.metrics import confusion_matrix
 
-from scipy.sparse import hstack
+# from scipy.sparse import hstack
 import pandas as pd
 
-import matplotlib.pylab as pl
+# import matplotlib.pylab as pl
 
 import sys
 
 from os import listdir
 from os.path import isfile, join
-
-
-def split_word_batches(filename, size_of_chunk=100):
-    """
-    Open the file, remove mentions & links,  split it in  chunks of n words and return the n-word block.
-    :param filename: The name of the file
-    :param size_of_chunk: The chunk size
-    """
-    with open(filename, "r") as f:
-        lines = f.readlines()
-        text = ""
-    for l in lines:
-        tokens = l.strip().split()
-        if len(tokens) > 1:
-            text += " " + tokens[1]
-
-    text = text.decode('utf-8').lower().split()
-    text = [word for word in text if word[0] != "@" and 'http' not in word[0:4] and word[0] != '#']
-    start = 0
-    end = start + size_of_chunk
-
-    while True:
-        start = end
-        end = start + size_of_chunk
-
-        if end >= len(text):
-            break
-
-        yield ' '.join(text[start:end])
 
 
 def load_corpus(directory):
@@ -67,8 +35,7 @@ def load_corpus(directory):
         train_files.remove(".DS_Store")
 
     for f in train_files:
-
-        size_of_file = os.path.getsize(directory+"/"+f)
+        # size_of_file = os.path.getsize(directory+"/"+f)
 
         train_set[f] = []
 
@@ -101,8 +68,8 @@ def train_model(train_set):
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
     char_vector = TfidfVectorizer(ngram_range=(2, 3), analyzer="char", binary=False, min_df=0, max_features=2000)
-    tag_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000,
-                                 decode_error='ignore')
+    # tag_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000,
+    #                             decode_error='ignore')
 
     # Our vectors are the feature union of word/char n-grams
     vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
@@ -112,7 +79,7 @@ def train_model(train_set):
     # Classes is the labels of each chunk
     classes = []
     # The tags of the n-word chunks
-    tags = []
+    # tags = []
 
     # Load training set
     for key, country_list in train_set.items():
@@ -121,7 +88,7 @@ def train_model(train_set):
         for item in country_list:
             corpus.append(item['text'])
             classes.append(item['label'])
-            tags.append(retrieve_pos_tags(item['text']))
+            # tags.append(retrieve_pos_tags(item['text']))
 
     print()
     print("Size of corpus: " + str(sys.getsizeof(corpus)))
@@ -130,24 +97,20 @@ def train_model(train_set):
 
     # Fit the model of tf-idf vectors for the corpus
     x1 = vectorizer.fit_transform(corpus)
-    x2 = tag_vector.fit_transform(tags)
+    # x2 = tag_vector.fit_transform(tags)
 
-    matrix = hstack((x1, x2), format='csr')
+    # matrix = hstack((x1, x2), format='csr')
 
     print("Number of features: ", len(vectorizer.get_feature_names()))
 
-    x = matrix.toarray()
+    x = x1.toarray()
     y = np.asarray(classes)
 
     print()
     print("Training model")
 
     model = LinearSVC(loss='hinge', dual=True)
-
-    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42)
-    model.fit(x_train, y_train)
-    y_prediction = model.predict(x_test)
-    cm = confusion_matrix(y_test, y_prediction)
+    model.fit(x, y)
 
     print("Saving model")
 
@@ -156,61 +119,48 @@ def train_model(train_set):
     print("Saving tfidf-vectorizers")
 
     pickle.dump(vectorizer, open('../data/model/vectorizer', 'wb'))
-    pickle.dump(tag_vector, open('../data/model/tag_vector', 'wb'))
-
-    # Calculate the accuracy
-    diagonal = 0
-    rest = 0
-    for i, v1 in enumerate(cm):
-        for j, v2 in enumerate(cm[i]):
-            if i == j:
-                diagonal += cm[i][j]
-            else:
-                rest += cm[i][j]
+    # pickle.dump(tag_vector, open('../data/model/tag_vector', 'wb'))
 
     print()
-    print("Accuracy: " + str((1 - (rest / (diagonal + rest))) * 100) + '%')
 
-    pl.matshow(cm)
-    pl.title('Confusion matrix')
-    pl.colorbar()
-    pl.ylabel('True label')
+    # y_prediction = model.fit(x_train, y_train).predict(x_test)
+    # cm = confusion_matrix(y_test, y_prediction)
+    #
+    # print(cm)
+    #
+    # pl.matshow(cm)
+    # pl.title('Confusion matrix')
+    # pl.colorbar()
+    # pl.ylabel('True label')
     # pl.xlabel('Predicted label')
-    global train_files
-    pl.xlabel(train_files)
-    pl.show()
+    # pl.show()
 
 
-def predict_geo_location(text):
+def predict_geo_location(text, path='../data/model/'):
     """
     Predicts the geo-location of a given text.
     :param text: The actual text
+    :param path: The path to the dumps
     :return: The most likeliest geo-location
     """
-    vectorizer = pickle.load(open('../data/model/vectorizer', 'rb'))
-    tag_vector = pickle.load(open('../data/model/tag_vector', 'rb'))
+    vectorizer = pickle.load(open(path + 'vectorizer', 'rb'))
 
     corpus = []
-    tags = []
-
     corpus.append(text)
-    tags.append(retrieve_pos_tags(text))
 
     x1 = vectorizer.transform(corpus)
-    x2 = tag_vector.transform(tags)
 
-    matrix = hstack((x1, x2), format='csr')
+    model = pickle.load(open(path + 'trained_model', 'rb'))
+    y_prediction = model.predict(x1.toarray())
 
-    model = pickle.load(open('../data/model/trained_model', 'rb'))
-    y_prediction = model.predict(matrix.toarray())
-
-    print(y_prediction)
+    return y_prediction[0]
 
 if __name__ == '__main__':
     if not isfile('../data/model/trained_model') or not isfile('../data/model/vectorizer') \
             or not isfile('../data/model/tag_vector'):
         corpora = load_corpus("../data/countries")
         train_model(corpora)
-    else:
-        # Some sample text
-        predict_geo_location("The Sublime Porte may have agreed...")
+
+    # Some sample text
+    prediction = predict_geo_location("The Sublime Porte may have agreed...")
+    print(prediction)

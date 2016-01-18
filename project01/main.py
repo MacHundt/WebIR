@@ -3,9 +3,8 @@
 
 import tkinter
 import webbrowser
-import pickle
 
-from utils.writing_style_analyzer1 import WritingStyleProcessor, WritingStyleLearner
+from utils.writing_style_analyzer import predict_geo_location
 
 __author__ = 'wikipedia_project_group'
 
@@ -14,7 +13,6 @@ class MainFrame(tkinter.Frame):
     gmaps_url = "https://www.google.de/maps/place/"
     result_country = ""
     result_confidence = 0
-
 
     """
     constructor of the main frame
@@ -28,10 +26,8 @@ class MainFrame(tkinter.Frame):
         "analyze button, text_box for input"
         self.analyze = None
         self.text_box = None
-        self.processor = pickle.load(open("data/trained_processor", 'rb'))
 
         self.create_widgets()
-
 
     """
     this function loads the widgets into the main frame
@@ -70,9 +66,9 @@ class MainFrame(tkinter.Frame):
         """
         try:
             input_text = self.text_box.get(1.0, tkinter.END)
-            probabilities, self.result_country = self.processor.predict_text(input_text)
-            self.result_confidence = 1 - probabilities.get(self.result_country)[2]
-            print(probabilities , "\n", self.result_confidence , "\n", self.result_country)
+            self.result_country = predict_geo_location(input_text)
+            self.result_confidence = 0
+
             self.open_results()
         except ZeroDivisionError as e:
             print(e)

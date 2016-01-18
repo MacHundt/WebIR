@@ -120,3 +120,4 @@ project01/data/pickle/*
 
 # Wiki dumps in project01/data/wiki_dump
 project01/data/wiki_dump/*
+/project01/data/countries

@@ -148,6 +148,11 @@ def train_model(train_set):
 
     pickle.dump(model, open('../data/model/trained_model', 'wb'))
 
+    print("Saving tfidf-vectorizers")
+
+    pickle.dump(vectorizer, open('../data/model/vectorizer', 'wb'))
+    pickle.dump(tag_vector, open('../data/model/tag_vector', 'wb'))
+
     # Calculate the accuracy
     diagonal = 0
     rest = 0
@@ -169,7 +174,36 @@ def train_model(train_set):
     pl.show()
 
 
-if __name__ == '__main__':
-    corpora = load_corpus("../data/countries")
+def predict_geo_location(text):
+    """
+    Predicts the geo-location of a given text.
+    :param text: The actual text
+    :return: The most likeliest geo-location
+    """
+    vectorizer = pickle.load(open('../data/model/vectorizer', 'rb'))
+    tag_vector = pickle.load(open('../data/model/tag_vector', 'rb'))
 
-    train_model(corpora)
+    corpus = []
+    tags = []
+
+    corpus.append(text)
+    tags.append(retrieve_pos_tags(text))
+
+    x1 = vectorizer.transform(corpus)
+    x2 = tag_vector.transform(tags)
+
+    matrix = hstack((x1, x2), format='csr')
+
+    model = pickle.load(open('../data/model/trained_model', 'rb'))
+    y_prediction = model.predict(matrix.toarray())
+
+    print(y_prediction)
+
+if __name__ == '__main__':
+    if not isfile('../data/model/trained_model') or not isfile('../data/model/vectorizer') \
+            or not isfile('../data/model/tag_vector'):
+        corpora = load_corpus("../data/countries")
+        train_model(corpora)
+    else:
+        # Some sample text
+        predict_geo_location("The Sublime Porte may have agreed...")

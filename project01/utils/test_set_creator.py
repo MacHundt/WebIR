@@ -66,10 +66,10 @@ def read_pickles(input_dir, corpus_dir):
 
 def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chunksize=2000, nr_revisions=5):
     '''
-        This method read in test corpus csv files, and puts the all
+    This method read in test corpus csv files, and puts the all
     the text to a Page pickle. Countries with text smaller than filesize will be rejected,
     the rest will be trimmed to the same filesize.
-    :param corpus_dir:          director to csv corpus
+    :param corpus_dir:          directory to csv corpus
     :param test_pickle_dir:     path to store the test pages
     :param chunksize:           chunk size, text for every revision
     :param nr_revisions:        number of revisions per country

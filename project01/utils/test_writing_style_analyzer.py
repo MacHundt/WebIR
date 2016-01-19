@@ -47,11 +47,12 @@ def main():
     print()
     print(12 * '-' + " Result " + 12 * '-')
     print()
-    print("Count Revisions: " + str(count))
+    print("Countries with [Positive Count, True Positive Count]")
     print()
     for country, amount in country_occurrences.items():
         print(country + ': ' + str(amount))
     print()
+    print("Count Revisions: " + str(count))
     print("True positive count: {0}".format(str(true_positive_count)))
     print("Accuracy: {0}".format(str(true_positive_count / count)))
 

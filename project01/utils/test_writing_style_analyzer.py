@@ -54,7 +54,7 @@ def main():
     print()
     print("Count Revisions: " + str(count))
     print("True positive count: {0}".format(str(true_positive_count)))
-    print("Accuracy: {0}".format(str(true_positive_count / count)))
+    print("Accuracy: %.4f" % ((true_positive_count / count) * 100) + '%')
 
 if __name__ == '__main__':
     main()

@@ -18,8 +18,7 @@ import pandas as pd
 import sys
 
 from os import listdir
-from os.path import isfile, join
-
+from os.path import isfile, join, getsize
 
 vectorizer = None
 model = None
@@ -31,7 +30,6 @@ def load_corpus(directory):
     :param directory: The actual directory
     :return: Returns the train-set
     """
-    global train_files
     train_files = [f for f in listdir(directory) if isfile(join(directory, f))]
     train_set = {}
 
@@ -39,7 +37,11 @@ def load_corpus(directory):
         train_files.remove(".DS_Store")
 
     for f in train_files:
-        # size_of_file = os.path.getsize(directory+"/"+f)
+        size_of_file = getsize(directory + '/' + f)
+
+        # A file needs to be at least 10KB big
+        if size_of_file < 10000:
+            continue
 
         train_set[f] = []
 
@@ -76,7 +78,7 @@ def train_model(train_set):
     #                             decode_error='ignore')
 
     # Our vectors are the feature union of word/char n-grams
-    vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
+    inner_vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
 
     # Corpus is a list with the n-word chunks
     corpus = []
@@ -100,32 +102,30 @@ def train_model(train_set):
     print("Number of training classes: ", len(set(classes)))
 
     # Fit the model of tf-idf vectors for the corpus
-    x1 = vectorizer.fit_transform(corpus)
+    x1 = inner_vectorizer.fit_transform(corpus)
     # x2 = tag_vector.fit_transform(tags)
 
     # matrix = hstack((x1, x2), format='csr')
 
-    print("Number of features: ", len(vectorizer.get_feature_names()))
+    print("Number of features: ", len(inner_vectorizer.get_feature_names()))
 
     x = x1.toarray()
     y = np.asarray(classes)
 
     print()
-    print("Training model")
+    print("Training model...")
 
-    model = LinearSVC(loss='hinge', dual=True)
-    model.fit(x, y)
+    inner_model = LinearSVC(loss='hinge', dual=True)
+    inner_model.fit(x, y)
 
-    print("Saving model")
+    print("Saving model...")
 
-    pickle.dump(model, open('../data/model/trained_model', 'wb'))
+    pickle.dump(inner_model, open('../data/model/trained_model', 'wb'))
 
-    print("Saving tfidf-vectorizers")
+    print("Saving tfidf-vectorizers...")
 
-    pickle.dump(vectorizer, open('../data/model/vectorizer', 'wb'))
+    pickle.dump(inner_vectorizer, open('../data/model/vectorizer', 'wb'))
     # pickle.dump(tag_vector, open('../data/model/tag_vector', 'wb'))
-
-    print()
 
     # y_prediction = model.fit(x_train, y_train).predict(x_test)
     # cm = confusion_matrix(y_test, y_prediction)

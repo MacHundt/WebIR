@@ -21,6 +21,9 @@ def main():
         if file_name == '.DS_Store':
             continue
 
+        if os.path.isdir("../data/test_pickles"+"/"+file_name):
+            continue
+
         page = pickle.load(open("../data/test_pickles/" + file_name, 'rb'))
 
         # Iterate over all revisions, predict the geo-location and count the positive occurrences

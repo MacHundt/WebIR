@@ -1,4 +1,5 @@
 """The file used for the writing-style-analyzation."""
+import copy
 import numpy as np
 
 import nltk
@@ -22,7 +23,7 @@ from os.path import isfile, join, getsize
 
 vectorizer = None
 model = None
-
+min_filesize = 40000
 
 def load_corpus(directory):
     """
@@ -36,11 +37,15 @@ def load_corpus(directory):
     if ".DS_Store" in train_files:
         train_files.remove(".DS_Store")
 
+    global used_countries, min_filesize
+    used_countries = copy.deepcopy(train_files)
+
     for f in train_files:
         size_of_file = getsize(directory + '/' + f)
 
-        # A file needs to be at least 10KB big
-        if size_of_file < 10000:
+        # A file needs to be at least 40KB big
+        if size_of_file < min_filesize:
+            used_countries.remove(f)
             continue
 
         train_set[f] = []
@@ -89,7 +94,7 @@ def train_model(train_set):
 
     # Load training set
     for key, country_list in train_set.items():
-        print("Processing " + '"' + key + '"')
+        # print("Processing " + '"' + key + '"')
 
         for item in country_list:
             corpus.append(item['text'])
@@ -100,6 +105,8 @@ def train_model(train_set):
     print("Size of corpus: " + str(sys.getsizeof(corpus)))
     print("Number of training instances: ", len(classes))
     print("Number of training classes: ", len(set(classes)))
+    global used_countries
+    print("Processed Countries:\n"+str(used_countries))
 
     # Fit the model of tf-idf vectors for the corpus
     x1 = inner_vectorizer.fit_transform(corpus)

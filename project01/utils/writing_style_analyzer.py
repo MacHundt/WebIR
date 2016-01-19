@@ -21,6 +21,10 @@ from os import listdir
 from os.path import isfile, join
 
 
+vectorizer = None
+model = None
+
+
 def load_corpus(directory):
     """
     Loads the corpus (in this case countries) from within a given directory.
@@ -143,23 +147,18 @@ def predict_geo_location(text, path='../data/model/'):
     :param path: The path to the dumps
     :return: The most likeliest geo-location
     """
-    vectorizer = pickle.load(open(path + 'vectorizer', 'rb'))
+    global vectorizer, model
 
-    corpus = []
-    corpus.append(text)
+    if vectorizer is None or model is None:
+        vectorizer = pickle.load(open(path + 'vectorizer', 'rb'))
+        model = pickle.load(open(path + 'trained_model', 'rb'))
 
+    corpus = [text]
     x1 = vectorizer.transform(corpus)
-
-    model = pickle.load(open(path + 'trained_model', 'rb'))
     y_prediction = model.predict(x1.toarray())
 
     return y_prediction[0]
 
 if __name__ == '__main__':
-    if not isfile('../data/model/trained_model') or not isfile('../data/model/vectorizer'):
-        corpora = load_corpus("../data/countries")
-        train_model(corpora)
-
-    # Some sample text
-    prediction = predict_geo_location("The Sublime Porte may have agreed...")
-    print(prediction)
+    corpora = load_corpus("../data/countries")
+    train_model(corpora)

@@ -8,13 +8,10 @@ import pickle
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC, SVC
+from sklearn.neural_network import BernoulliRBM
 from sklearn.pipeline import FeatureUnion
-# from sklearn.metrics import confusion_matrix
 
-# from scipy.sparse import hstack
 import pandas as pd
-
-# import matplotlib.pylab as pl
 
 import sys
 
@@ -125,6 +122,9 @@ def train_model(train_set, mode='linear'):
         inner_model.fit(x, y)
     elif mode == 'kernel_linear':
         inner_model = SVC(kernel="linear")
+        inner_model.fit(x, y)
+    elif mode == 'neural_network':
+        inner_model = BernoulliRBM(n_components=2)
         inner_model.fit(x, y)
     else:
         inner_model = LinearSVC(loss='hinge', dual=True)

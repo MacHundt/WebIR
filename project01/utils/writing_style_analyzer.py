@@ -137,7 +137,7 @@ def train_model(train_set, mode='linear'):
 
     print("Saving tfidf-vectorizers...")
 
-    pickle.dump(inner_vectorizer, open('../data/model/vectorizer_' + mode, 'wb'))
+    pickle.dump(inner_vectorizer, open('../data/model/vectorizer', 'wb'))
 
 
 def predict_geo_location(text, path='../data/model/', mode='linear'):
@@ -151,7 +151,7 @@ def predict_geo_location(text, path='../data/model/', mode='linear'):
     global vectorizer, model
 
     if vectorizer is None or model is None:
-        vectorizer = pickle.load(open(path + 'vectorizer_' + mode, 'rb'))
+        vectorizer = pickle.load(open(path + 'vectorizer', 'rb'))
         model = pickle.load(open(path + 'trained_model_' + mode, 'rb'))
 
     corpus = [text]
@@ -162,4 +162,4 @@ def predict_geo_location(text, path='../data/model/', mode='linear'):
 
 if __name__ == '__main__':
     corpora = load_corpus("../data/countries")
-    train_model(corpora)
+    train_model(corpora, mode='linear')

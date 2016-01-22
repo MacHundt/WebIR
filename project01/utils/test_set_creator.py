@@ -14,13 +14,13 @@ append = True
 
 
 def read_pickles(input_dir, corpus_dir):
-    '''
+    """
     This methods read in test pickle files and creates a test corpus as csv file;
     Format:
         row:    id  \t  text content
     :param input_dir:   Input directory
     :return: csv files
-    '''
+    """
     train_files = [f for f in listdir(input_dir) if isfile(join(input_dir, f))]
     country_id = 0
 
@@ -30,7 +30,6 @@ def read_pickles(input_dir, corpus_dir):
     if not append:
         for file in os.path.isfile(corpus_dir):
             os.remove(corpus_dir+file)
-
 
     for f in train_files:
         if "Talk:" in f or ".DS_Store" in f:
@@ -63,9 +62,8 @@ def read_pickles(input_dir, corpus_dir):
                     file.write(str(countries_id_dic[country]) + '\t' + revision.diff_content + '\n')
 
 
-
 def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chunksize=2000, nr_revisions=5):
-    '''
+    """
     This method read in test corpus csv files, and puts the all
     the text to a Page pickle. Countries with text smaller than filesize will be rejected,
     the rest will be trimmed to the same filesize.
@@ -74,7 +72,7 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
     :param chunksize:           chunk size, text for every revision
     :param nr_revisions:        number of revisions per country
     :return:                    pickle pages for every country
-    '''
+    """
     country_ids = 0
     for file_name in os.listdir(corpus_dir):
         if file_name == '.DS_Store':
@@ -91,7 +89,6 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
         df = pd.read_csv(corpus_dir+file_name, sep="\t", dtype={'id': object, 'text': object})
         # id of the first row
         country_ids += 1
-
 
         i = 0
         for row in df['text']:
@@ -112,8 +109,6 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
         if i >= nr_revisions:
             page.add_revision(rev)
             page.save_as_serialized_Object(path_to_pickle=test_pickle_dir)
-
-
 
 
 if __name__ == '__main__':

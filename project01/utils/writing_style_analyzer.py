@@ -25,6 +25,7 @@ vectorizer = None
 model = None
 min_filesize = 40000
 
+
 def load_corpus(directory):
     """
     Loads the corpus (in this case countries) from within a given directory.
@@ -106,7 +107,7 @@ def train_model(train_set):
     print("Number of training instances: ", len(classes))
     print("Number of training classes: ", len(set(classes)))
     global used_countries
-    print("Processed Countries:\n"+str(used_countries))
+    print("Processed Countries:\n" + str(used_countries))
 
     # Fit the model of tf-idf vectors for the corpus
     x1 = inner_vectorizer.fit_transform(corpus)

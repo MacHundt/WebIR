@@ -115,8 +115,7 @@ crashlytics-build.properties
 # Mac-OSX
 .DS_Store
 
-# Pickle files in project01/data/pickle/
-project01/data/pickle/*
-
-# Wiki dumps in project01/data/wiki_dump
+# Wiki dumps, countries and pickle-files
 project01/data/wiki_dump/*
+project01/data/countries/*
+project01/data/test_pickles/*

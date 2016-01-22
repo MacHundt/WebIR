@@ -343,7 +343,6 @@ def abnormal_word_frequency(line, threshold=0.25, topK=5, epsilon=0.15 ):
     return False
 
 
-
 def normalize_text(line):
     """
     This method normalizes a given text.
@@ -370,8 +369,8 @@ def normalize_text(line):
     if abnormal_word_frequency(line):
         return ""
 
-
     line = line.lower()
+
     if "align=" in line:
         return ""
     if "namespace" in line[:17]:
@@ -471,9 +470,9 @@ class Page:
     """
 
     def __init__(self):
-        '''
+        """
         :param title: String
-        '''
+        """
         self.title = ""
         self.revisions = []
 
@@ -508,11 +507,11 @@ class Page:
             write_file.write("</page>\n</pages>\n")
 
     def save_as_serialized_Object(self, path_to_pickle):
-        '''
+        """
         This method stores itself as pickle object to a given path folder
         :param path_to_pickle: String
         :return: void
-        '''
+        """
         pickle.dump(self, open(path_to_pickle + self.title, "wb"))
 
 
@@ -524,13 +523,13 @@ class Revision:
     """
 
     def __init__(self, id, ip, country, content, keep_content=False):
-        '''
+        """
         :param id: Int
         :param ip: String
         :param country: String
         :param content: String
         :param keep_content: Boolean  keep after diff() was calculated
-        '''
+        """
         self.rev_id = id
         self.ip = ip
         self.country = country

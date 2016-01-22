@@ -162,4 +162,4 @@ def predict_geo_location(text, path='../data/model/', mode='linear'):
 
 if __name__ == '__main__':
     corpora = load_corpus("../data/countries")
-    train_model(corpora)
+    train_model(corpora, mode='neural_network')

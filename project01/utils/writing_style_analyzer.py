@@ -124,7 +124,7 @@ def train_model(train_set, mode='linear'):
         inner_model = SVC(kernel="linear")
         inner_model.fit(x, y)
     elif mode == 'neural_network':
-        inner_model = BernoulliRBM(n_components=2)
+        inner_model = BernoulliRBM()
         inner_model.fit(x, y)
     else:
         inner_model = LinearSVC(loss='hinge', dual=True)

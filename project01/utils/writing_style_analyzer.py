@@ -135,18 +135,6 @@ def train_model(train_set):
     pickle.dump(inner_vectorizer, open('../data/model/vectorizer', 'wb'))
     # pickle.dump(tag_vector, open('../data/model/tag_vector', 'wb'))
 
-    # y_prediction = model.fit(x_train, y_train).predict(x_test)
-    # cm = confusion_matrix(y_test, y_prediction)
-    #
-    # print(cm)
-    #
-    # pl.matshow(cm)
-    # pl.title('Confusion matrix')
-    # pl.colorbar()
-    # pl.ylabel('True label')
-    # pl.xlabel('Predicted label')
-    # pl.show()
-
 
 def predict_geo_location(text, path='../data/model/'):
     """

@@ -7,7 +7,7 @@ import nltk
 import pickle
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 from sklearn.pipeline import FeatureUnion
 # from sklearn.metrics import confusion_matrix
 
@@ -71,17 +71,16 @@ def retrieve_pos_tags(text):
     return " ".join([tag for (word, tag) in nltk.pos_tag(tokens)])
 
 
-def train_model(train_set):
+def train_model(train_set, mode='linear'):
     """
     Train the models, using 10-fold-cv and LibLinear classification.
     :param train_set: The set that is used for training
+    :param mode: The that gets used for training
     """
     # Create two blocks of features, word anc character n-grams, size of 2
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
     char_vector = TfidfVectorizer(ngram_range=(2, 3), analyzer="char", binary=False, min_df=0, max_features=2000)
-    # tag_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000,
-    #                             decode_error='ignore')
 
     # Our vectors are the feature union of word/char n-grams
     inner_vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])
@@ -90,8 +89,6 @@ def train_model(train_set):
     corpus = []
     # Classes is the labels of each chunk
     classes = []
-    # The tags of the n-word chunks
-    # tags = []
 
     # Load training set
     for key, country_list in train_set.items():
@@ -111,9 +108,6 @@ def train_model(train_set):
 
     # Fit the model of tf-idf vectors for the corpus
     x1 = inner_vectorizer.fit_transform(corpus)
-    # x2 = tag_vector.fit_transform(tags)
-
-    # matrix = hstack((x1, x2), format='csr')
 
     print("Number of features: ", len(inner_vectorizer.get_feature_names()))
 
@@ -123,31 +117,42 @@ def train_model(train_set):
     print()
     print("Training model...")
 
-    inner_model = LinearSVC(loss='hinge', dual=True)
-    inner_model.fit(x, y)
+    if mode == 'kernel_rbf':
+        inner_model = SVC(kernel="rbf")
+        inner_model.fit(x, y)
+    elif mode == 'kernel_poly':
+        inner_model = SVC(kernel="poly")
+        inner_model.fit(x, y)
+    elif mode == 'kernel_linear':
+        inner_model = SVC(kernel="linear")
+        inner_model.fit(x, y)
+    else:
+        inner_model = LinearSVC(loss='hinge', dual=True)
+        inner_model.fit(x, y)
+        mode = 'linear'
 
     print("Saving model...")
 
-    pickle.dump(inner_model, open('../data/model/trained_model', 'wb'))
+    pickle.dump(inner_model, open('../data/model/trained_model_' + mode, 'wb'))
 
     print("Saving tfidf-vectorizers...")
 
-    pickle.dump(inner_vectorizer, open('../data/model/vectorizer', 'wb'))
-    # pickle.dump(tag_vector, open('../data/model/tag_vector', 'wb'))
+    pickle.dump(inner_vectorizer, open('../data/model/vectorizer_' + mode, 'wb'))
 
 
-def predict_geo_location(text, path='../data/model/'):
+def predict_geo_location(text, path='../data/model/', mode='linear'):
     """
     Predicts the geo-location of a given text.
     :param text: The actual text
     :param path: The path to the dumps
+    :param mode: The model that gets used for predicting
     :return: The most likeliest geo-location
     """
     global vectorizer, model
 
     if vectorizer is None or model is None:
-        vectorizer = pickle.load(open(path + 'vectorizer', 'rb'))
-        model = pickle.load(open(path + 'trained_model', 'rb'))
+        vectorizer = pickle.load(open(path + 'vectorizer_' + mode, 'rb'))
+        model = pickle.load(open(path + 'trained_model_' + mode, 'rb'))
 
     corpus = [text]
     x1 = vectorizer.transform(corpus)

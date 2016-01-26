@@ -19,6 +19,8 @@ def retrieve_geo_location(ip_address):
     :return: The geo-location
     """
     global reader
+
+    # noinspection PyBroadException
     try:
         return reader.city(ip_address)
     except Exception:

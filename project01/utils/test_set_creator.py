@@ -18,7 +18,8 @@ def read_pickles(input_dir, corpus_dir):
     This methods read in test pickle files and creates a test corpus as csv file;
     Format:
         row:    id  \t  text content
-    :param input_dir:   Input directory
+    :param input_dir: Input directory
+    :param corpus_dir: The directory of the corpus
     :return: csv files
     """
     train_files = [f for f in listdir(input_dir) if isfile(join(input_dir, f))]
@@ -91,10 +92,11 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
         country_ids += 1
 
         i = 0
+        rev = None
         for row in df['text']:
             if i >= nr_revisions:
                 break
-            rev = Revision(id, ip="", country=file_name, content="")
+            rev = Revision(id, p_ip="", p_country=file_name, content="")
             test_content = ""
             if type(row) is str and sys.getsizeof(page) < chunksize:
                 for word in row.split():
@@ -108,7 +110,7 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
 
         if i >= nr_revisions:
             page.add_revision(rev)
-            page.save_as_serialized_Object(path_to_pickle=test_pickle_dir)
+            page.save_as_serialized_object(path_to_pickle=test_pickle_dir)
 
 
 if __name__ == '__main__':

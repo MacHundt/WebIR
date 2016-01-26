@@ -1,4 +1,5 @@
 """The file used for the writing-style-analyzation."""
+
 import copy
 import numpy as np
 
@@ -8,7 +9,6 @@ import pickle
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC, SVC
-from sklearn.neural_network import BernoulliRBM
 from sklearn.pipeline import FeatureUnion
 
 import pandas as pd
@@ -20,7 +20,7 @@ from os.path import isfile, join, getsize
 
 vectorizer = None
 model = None
-min_filesize = 40000
+min_file_size = 40000
 
 
 def load_corpus(directory):
@@ -35,14 +35,14 @@ def load_corpus(directory):
     if ".DS_Store" in train_files:
         train_files.remove(".DS_Store")
 
-    global used_countries, min_filesize
+    global used_countries, min_file_size
     used_countries = copy.deepcopy(train_files)
 
     for f in train_files:
         size_of_file = getsize(directory + '/' + f)
 
         # A file needs to be at least 40KB big
-        if size_of_file < min_filesize:
+        if size_of_file < min_file_size:
             used_countries.remove(f)
             continue
 
@@ -74,6 +74,8 @@ def train_model(train_set, mode='linear'):
     :param train_set: The set that is used for training
     :param mode: The that gets used for training
     """
+    global used_countries
+
     # Create two blocks of features, word anc character n-grams, size of 2
     # We can also append here multiple other features in general
     word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=2000)
@@ -100,7 +102,6 @@ def train_model(train_set, mode='linear'):
     print("Size of corpus: " + str(sys.getsizeof(corpus)))
     print("Number of training instances: ", len(classes))
     print("Number of training classes: ", len(set(classes)))
-    global used_countries
     print("Processed Countries:\n" + str(used_countries))
 
     # Fit the model of tf-idf vectors for the corpus
@@ -122,9 +123,6 @@ def train_model(train_set, mode='linear'):
         inner_model.fit(x, y)
     elif mode == 'kernel_linear':
         inner_model = SVC(kernel="linear")
-        inner_model.fit(x, y)
-    elif mode == 'neural_network':
-        inner_model = BernoulliRBM()
         inner_model.fit(x, y)
     else:
         inner_model = LinearSVC(loss='hinge', dual=True)

@@ -62,14 +62,17 @@ def main():
     print()
     print("Countries with [Positive Count, True Positive Count]")
     print()
+
     for country, amount in country_occurrences.items():
         print(country + ': ' + str(amount))
+
     print()
     print("Count Revisions: " + str(count))
     print("True positive count: {0}".format(str(true_positive_count)))
     print("Accuracy: %.4f" % ((true_positive_count / count) * 100) + '%')
 
     cm = confusion_matrix(test, prediction, test_country_list)
+
     pl.matshow(cm)
     pl.title("Confusion Matrix")
     pl.colorbar()

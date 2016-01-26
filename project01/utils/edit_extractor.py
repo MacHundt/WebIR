@@ -1,6 +1,4 @@
 import operator
-from queue import Queue
-import threading
 import math
 from geolocator import retrieve_geo_location as get_geo
 from difflib import Differ, SequenceMatcher
@@ -57,6 +55,7 @@ def extract_edits(start_at=0):
     The edit extractor uses a widipedia dump file to extract the edits of a page and maps them to a geo location.
     The diff-content to the previous edit is calculated and stored, if it is big enough.
     We only use edits with an ip address.
+    :param start_at: Where the edit-extractor starts at
     """
     global revision_text, ip, country, start_revision, stop_revision, has_ip, is_text, \
         start_page, has_previous, MAX_DIFF_CHARS, path_to_xml_data, num_lines, test
@@ -100,7 +99,7 @@ def extract_edits(start_at=0):
                 continue
 
             # store text after opening tag to revision text
-            #if has_ip:                                                 ***
+            # if has_ip:                                                 ***
             if '<text xml' in line:
                 is_text = True
                 temp = line[line.find('>') + 1:]
@@ -139,9 +138,9 @@ def extract_edits(start_at=0):
                     has_previous = False
                     reset()
                     if do_xml:
-                        page.write_to_XML_file(path_to_xml_data)
+                        page.write_to_xml_file(path_to_xml_data)
                     if do_pickle:
-                        page.save_as_serialized_Object(path_to_pickle_objects)
+                        page.save_as_serialized_object(path_to_pickle_objects)
                     print("running time for " + page.title + ": " + str(
                         round(page_end_time - page_start_time, 2)) + " sec.\n")
                     continue
@@ -211,14 +210,16 @@ def extract_edits(start_at=0):
                                         #     print(diff_text)
                                         diff_text = ""
 
-                                    # # heuristic: 30 words with average length of 12 chars - Then a sentence punctuation must occur
+                                    # heuristic: 30 words with average length of 12 chars -
+                                    # Then a sentence punctuation must occur
                                     # if len(diff_text) > 360 and not re.search('[;:.!?]', diff_text[:600]):
                                     #     if len(diff_text) > 500:
                                     #         print("Post-Cleaning: Sentence_Punctuation")
                                     #         print(diff_text)
                                     #     diff_text = ""
 
-                                    if len(diff_text) > 2 and abnormal_word_frequency(diff_text, threshold=0.4, epsilon=0.2):
+                                    if len(diff_text) > 2 and abnormal_word_frequency(diff_text, threshold=0.4,
+                                                                                      epsilon=0.2):
                                         # if len(diff_text) > 500:
                                         #     print("Post-Cleaning: Abnormal_Word_Freq")
                                         #     print(diff_text)
@@ -245,7 +246,7 @@ def extract_edits(start_at=0):
                         else:
                             # Change content of previous revision to current content
                             if has_previous:
-                                #print(country)     # the username or None
+                                # print(country)     # the username or None
                                 prev_revision.set_content(revision_text)
 
                         reset()
@@ -257,13 +258,13 @@ def extract_edits(start_at=0):
     print("running time of script: " + str(round(end_script_time - script_start_time, 2)))
 
 
-def get_country(ip):
+def get_country(ip_address):
     """
     Get the country from the ip address using geolocator
-    :param ip: The actual ip-address
+    :param ip_address: The actual ip-address
     :return: The geo-location
     """
-    geo_location = get_geo(ip)
+    geo_location = get_geo(ip_address)
     if geo_location is not "None":
         return geo_location.country.name
     else:
@@ -290,14 +291,14 @@ def variety_char_threshold(line, max_diff_chars):
     return False
 
 
-def abnormal_word_frequency(line, threshold=0.25, topK=5, epsilon=0.15 ):
+def abnormal_word_frequency(line, threshold=0.25, top_k=5, epsilon=0.15):
     """
     1) If the most frequent word occurs more than threshold
     2) Check for items_to_look_at (max: topK) if they occur against ZIPF's Law (with epsilon range)
 
     :param line: Text
     :param threshold: 0.25 default, tf / len(dictionary),
-    :param topK: 3 default,
+    :param top_k: 3 default,
     :param epsilon: + 15% range
     :return: boolean, if abnormal
     """
@@ -307,7 +308,7 @@ def abnormal_word_frequency(line, threshold=0.25, topK=5, epsilon=0.15 ):
     for word in line.split():
         word_count += 1
         if word in word_dic.keys():
-            word_dic[word] = word_dic[word] + 1
+            word_dic[word] += 1
         else:
             word_dic[word] = 1
 
@@ -315,7 +316,7 @@ def abnormal_word_frequency(line, threshold=0.25, topK=5, epsilon=0.15 ):
     top_score = word_dic[0][1]
 
     # if most frequent word occurs more often than threshold --> abnormal!
-    if (round(top_score / word_count, 2) > threshold):
+    if round(top_score / word_count, 2) > threshold:
         # if len(line) > 500:
         #     print("Score: ", round(top_score / word_count, 2))
         #     print(word_dic)
@@ -323,13 +324,15 @@ def abnormal_word_frequency(line, threshold=0.25, topK=5, epsilon=0.15 ):
         return True
 
     # check for items_to_look_at if they occur against ZIPF's Law (with epsilon range)
-    items_to_look_at = int(min(topK, math.ceil(math.log(top_score)), 2))
+    items_to_look_at = int(min(top_k, math.ceil(math.log(top_score)), 2))
     if len(word_dic) < items_to_look_at:
-        print("Items to look at is < length of dictionary")   # --> abnormal!
+        # --> abnormal!
+        print("Items to look at is < length of dictionary")
         return True
 
     for i in range(1, items_to_look_at):
-        zipf_score = round((top_score * (1/i)) / word_count, 2)      # should more or less be the frequency of the next tf
+        # should more or less be the frequency of the next tf
+        zipf_score = round((top_score * (1/i)) / word_count, 2)
         score = round(word_dic[i][1] / word_count, 2)
 
         deviation = zipf_score * (1+epsilon) - score
@@ -384,7 +387,6 @@ def normalize_text(line):
     for x in closedTag:
         line = re.sub(str('{0}'.format(x)), "", line, re.MULTILINE)
 
-
     # remove all ::+ ignore \n
     line = re.sub('[:][:]+', " ", line, re.MULTILINE)
     line = re.sub('[\']+', "\'", line)
@@ -421,7 +423,7 @@ def normalize_text(line):
             continue
 
         if number_pattern.match(word):
-            output += " "+word
+            output += " " + word
             continue
 
         word = word.replace("(", "")
@@ -440,7 +442,7 @@ def normalize_text(line):
             if first is not word:
                 output = output[:-1]
         first = word
-        output += " "+word
+        output += " " + word
 
     # some abnormal mistake, remove manual
     if "ref " in output:
@@ -470,9 +472,6 @@ class Page:
     """
 
     def __init__(self):
-        """
-        :param title: String
-        """
         self.title = ""
         self.revisions = []
 
@@ -482,31 +481,31 @@ class Page:
     def add_revision(self, revision):
         self.revisions.append(revision)
 
-    def remove_revision(self, id):
+    def remove_revision(self, ip_address):
         for rev in self.revisions:
-            if rev.rev_id == id:
+            if rev.rev_id == ip_address:
                 self.revisions.remove(rev)
                 break
 
-    def to_XML(self):
+    def to_xml(self):
         output = "<page>\n\t<title>{0}</title>\n".format(self.title)
         for revision in self.revisions:
-            output += revision.to_XML()
+            output += revision.to_xml()
         output += "</page>\n"
         return output
 
-    def write_to_XML_file(self, path_to_XML):
-        with open(path_to_XML + "{0}".format(self.title) + ".xml", "w") as write_file:
+    def write_to_xml_file(self, path_to_xml):
+        with open(path_to_xml + "{0}".format(self.title) + ".xml", "w") as write_file:
             xml_header = '<?xml version="1.0" encoding="UTF-8"?>' + "\n"
             write_file.write(xml_header)
             output = "<pages>\n<page>\n\t<title>{0}</title>\n".format(self.title)
             write_file.write(output)
             for revision in self.revisions:
-                write_file.write(revision.to_XML())
+                write_file.write(revision.to_xml())
 
             write_file.write("</page>\n</pages>\n")
 
-    def save_as_serialized_Object(self, path_to_pickle):
+    def save_as_serialized_object(self, path_to_pickle):
         """
         This method stores itself as pickle object to a given path folder
         :param path_to_pickle: String
@@ -522,29 +521,30 @@ class Revision:
     When diff() was executed the
     """
 
-    def __init__(self, id, ip, country, content, keep_content=False):
+    def __init__(self, p_id, p_ip, p_country, content, keep_content=False):
         """
-        :param id: Int
-        :param ip: String
-        :param country: String
+        :param p_id: Int
+        :param p_ip: String
+        :param p_country: String
         :param content: String
         :param keep_content: Boolean  keep after diff() was calculated
         """
-        self.rev_id = id
-        self.ip = ip
-        self.country = country
+        self.rev_id = p_id
+        self.ip = p_ip
+        self.country = p_country
         self.content = content
         self.diff_content = ""
         self.keep_content = keep_content
         self.diff_size = 0
 
-    def to_XML(self):
+    def to_xml(self):
         output = "\t<revision>\n"
-        output = "\t<revID>{0}</revID>\n".format(self.rev_id)
+        output += "\t<revID>{0}</revID>\n".format(self.rev_id)
         output += "\t\t<ip>{0}</ip>\n".format(self.ip)
         output += "\t\t<country>{0}</country>\n".format(self.country)
         output += "\t\t<diff_content>{0}\t\t</diff_content>\n".format(self.diff_content)
         output += "\t</revision>\n"
+
         return output
 
     def set_content(self, content):

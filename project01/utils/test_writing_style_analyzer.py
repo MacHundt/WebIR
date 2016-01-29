@@ -25,6 +25,8 @@ def main():
 
     used_countries = pickle.load(open("../data/model/used_countries", 'rb'))
 
+    result_file = open("../data/model/result_stat.csv", "w")
+
     for file_name in os.listdir("../data/test_pickles"):
         if file_name == '.DS_Store':
             continue
@@ -71,14 +73,18 @@ def main():
     print("Countries with [Positive Count, True Positive Count]")
     print()
 
+    result_file.write("country, positive_count, true_positie_count\n")
     for country, amount in country_occurrences.items():
         print(country + ': ' + str(amount))
+        result_file.write(country+", "+str(amount[0])+", "+str(amount[1])+"\n")
 
     print()
     print("Count Revisions: " + str(count))
     print("True positive count: {0}".format(str(true_positive_count)))
     print("Accuracy: %.4f" % ((true_positive_count / count) * 100) + '%')
 
+
+    result_file.close()
     trained_data_stat_to_csv()
 
     cm = confusion_matrix(test, prediction, test_country_list)
@@ -106,7 +112,7 @@ def trained_data_stat_to_csv(path_to_trained_data="../data/countries/"):
     with open("../data/model/training_data_stat.csv", "w") as file:
         file.write("country, size\n")
         for country in counrtry_dic.items():
-            print(country)
+            #print(country)
             file.write(country[0]+", " + str(country[1])+"\n")
 
 

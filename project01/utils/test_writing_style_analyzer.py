@@ -79,6 +79,8 @@ def main():
     print("True positive count: {0}".format(str(true_positive_count)))
     print("Accuracy: %.4f" % ((true_positive_count / count) * 100) + '%')
 
+    trained_data_stat_to_csv()
+
     cm = confusion_matrix(test, prediction, test_country_list)
 
     pl.matshow(cm)
@@ -87,6 +89,26 @@ def main():
     pl.ylabel('True label')
     pl.xlabel('Predicted label \n\n'+str(test_country_list))
     pl.show()
+
+
+def trained_data_stat_to_csv(path_to_trained_data="../data/countries/"):
+    total_size = 0
+    counrtry_dic = {}
+    for file_name in os.listdir(path_to_trained_data):
+        if file_name == '.DS_Store':
+            continue
+        size = os.path.getsize(path_to_trained_data+file_name)
+        total_size += size
+        counrtry_dic[file_name] = size
+
+    print("Total size of trained data: "+str(total_size / 1000000) + " MB")
+
+    with open("../data/model/training_data_stat.csv", "w") as file:
+        file.write("country, size\n")
+        for country in counrtry_dic.items():
+            print(country)
+            file.write(country[0]+", " + str(country[1])+"\n")
+
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,22 @@
+country, positive_count, true_positive_count
+Australia, 4, 1
+China, 2, 0
+Macao, 6, 6
+United States, 67, 6
+Bulgaria, 1, 0
+Netherlands, 2, 1
+United Kingdom, 5, 1
+Finland, 3, 0
+Philippines, 2, 1
+India, 1, 1
+Spain, 2, 0
+Denmark, 1, 0
+Greece, 1, 0
+Norway, 1, 0
+Bosnia and Herzegovina, 4, 0
+Germany, 7, 3
+Brazil, 2, 0
+Pakistan, 1, 1
+Indonesia, 1, 0
+Switzerland, 6, 0
+New Zealand, 1, 1

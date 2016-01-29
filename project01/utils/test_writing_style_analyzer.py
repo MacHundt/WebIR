@@ -5,7 +5,7 @@ The file used for evaluation of our writing style analyser
 
 import pickle
 import os.path
-import matplotlib.pylab as pl
+import pylab as pl
 from sklearn.metrics import confusion_matrix
 
 from edit_extractor import Page, Revision
@@ -73,20 +73,22 @@ def main():
     print("Countries with [Positive Count, True Positive Count]")
     print()
 
+    # Output results
     result_file.write("country, positive_count, true_positive_count\n")
 
     for country, amount in country_occurrences.items():
         print(country + ': ' + str(amount))
         result_file.write(country + ", " + str(amount[0]) + ", " + str(amount[1]) + "\n")
 
+    result_file.write("Total, " + str(count) + ", " + str(true_positive_count) + "\n")
+    result_file.close()
+    trained_data_stat_to_csv()
+    test_countries_to_file(test_country_list)
+
     print()
     print("Count Revisions: " + str(count))
     print("True positive count: {0}".format(str(true_positive_count)))
     print("Accuracy: %.4f" % ((true_positive_count / count) * 100) + '%')
-
-    result_file.write("Total, " + str(count) + ", " + str(true_positive_count) + "\n")
-    result_file.close()
-    trained_data_stat_to_csv()
 
     cm = confusion_matrix(test, prediction, test_country_list)
 
@@ -94,9 +96,17 @@ def main():
     pl.title("Confusion Matrix")
     pl.colorbar()
     pl.ylabel('True label')
+    pl.xlabel('Predicted label')
+    pl.savefig("../result/cm.png")
+
     pl.xlabel('Predicted label \n\n'+str(test_country_list))
     pl.show()
 
+
+def test_countries_to_file(country_list, path="../result/"):
+    with open(path+"test_countries", "w") as file:
+        file.write(str(country_list))
+        file.write("\n")
 
 def trained_data_stat_to_csv(path_to_trained_data="../data/countries/"):
     total_size = 0

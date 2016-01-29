@@ -25,7 +25,7 @@ def main():
 
     used_countries = pickle.load(open("../data/model/used_countries", 'rb'))
 
-    result_file = open("../data/model/result_stat.csv", "w")
+    result_file = open("../result/result_stat.csv", "w")
 
     for file_name in os.listdir("../data/test_pickles"):
         if file_name == '.DS_Store':
@@ -109,7 +109,7 @@ def trained_data_stat_to_csv(path_to_trained_data="../data/countries/"):
 
     print("Total size of trained data: "+str(total_size / 1000000) + " MB")
 
-    with open("../data/model/training_data_stat.csv", "w") as file:
+    with open("../result/training_data_stat.csv", "w") as file:
         file.write("country, size\n")
         for country in counrtry_dic.items():
             #print(country)

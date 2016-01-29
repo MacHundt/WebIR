@@ -1,5 +1,6 @@
 from genericpath import getsize
-from os import listdir
+from os import listdir, makedirs
+from os.path import isdir
 import os
 from os.path import isfile, join
 import pickle
@@ -18,7 +19,8 @@ def read_pickles(input_dir, corpus_dir):
     This methods read in test pickle files and creates a test corpus as csv file;
     Format:
         row:    id  \t  text content
-    :param input_dir:   Input directory
+    :param input_dir: Input directory
+    :param corpus_dir: The directory of the corpus
     :return: csv files
     """
     train_files = [f for f in listdir(input_dir) if isfile(join(input_dir, f))]
@@ -39,7 +41,7 @@ def read_pickles(input_dir, corpus_dir):
         for revision in page.revisions:
             country = revision.country
 
-            # remove all usernames
+            # remove all user-names
             if "  " in country:
                 continue
 
@@ -73,6 +75,10 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
     :param nr_revisions:        number of revisions per country
     :return:                    pickle pages for every country
     """
+    # Create the test-picke-folder if it does not exist
+    if not isdir(test_pickle_dir):
+        makedirs(test_pickle_dir)
+
     country_ids = 0
     for file_name in os.listdir(corpus_dir):
         if file_name == '.DS_Store':
@@ -86,19 +92,21 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
         page.add_title(file_name)
         print("Process: "+file_name)
 
-        df = pd.read_csv(corpus_dir+file_name, sep="\t", dtype={'id': object, 'text': object})
+        df = pd.read_csv(corpus_dir + file_name, sep="\t", dtype={'id': object, 'text': object})
+
         # id of the first row
         country_ids += 1
 
         i = 0
+        rev = None
         for row in df['text']:
             if i >= nr_revisions:
                 break
-            rev = Revision(id, ip="", country=file_name, content="")
+            rev = Revision(id, p_ip="", p_country=file_name, content="")
             test_content = ""
             if type(row) is str and sys.getsizeof(page) < chunksize:
                 for word in row.split():
-                    test_content += word+" "
+                    test_content += word + " "
 
                     if sys.getsizeof(test_content) > chunksize:
                         rev.set_diff_content(test_content)
@@ -108,7 +116,7 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
 
         if i >= nr_revisions:
             page.add_revision(rev)
-            page.save_as_serialized_Object(path_to_pickle=test_pickle_dir)
+            page.save_as_serialized_object(path_to_pickle=test_pickle_dir)
 
 
 if __name__ == '__main__':

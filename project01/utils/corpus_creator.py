@@ -21,7 +21,7 @@ def read_pickles(input_dir, corpus_dir):
         for revision in page.revisions:
             country = revision.country
 
-            # remove all usernames
+            # remove all user-names
             if "  " in country:
                 continue
 

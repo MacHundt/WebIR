@@ -67,13 +67,15 @@ def main():
             count += 1
         print("Processed: " + page.title)
 
+    # Output results
     print()
     print(12 * '-' + " Result " + 12 * '-')
+    print()
+    trained_data_stat_to_csv()
     print()
     print("Countries with [Positive Count, True Positive Count]")
     print()
 
-    # Output results
     result_file.write("country, positive_count, true_positive_count\n")
 
     for country, amount in country_occurrences.items():
@@ -82,7 +84,6 @@ def main():
 
     result_file.write("Total, " + str(count) + ", " + str(true_positive_count) + "\n")
     result_file.close()
-    trained_data_stat_to_csv()
     test_countries_to_file(test_country_list)
 
     print()

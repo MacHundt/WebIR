@@ -43,8 +43,8 @@ def main():
 
             # country was not trained
             test_country = revision.country
-            if not test_country in used_countries:
-                print(test_country + " not trained")
+            if test_country not in used_countries:
+                continue
 
             predicted_geo_location = predict_geo_location(test_content)
 
@@ -74,16 +74,17 @@ def main():
     print()
 
     result_file.write("country, positive_count, true_positive_count\n")
+
     for country, amount in country_occurrences.items():
         print(country + ': ' + str(amount))
-        result_file.write(country+", "+str(amount[0])+", "+str(amount[1])+"\n")
+        result_file.write(country + ", " + str(amount[0]) + ", " + str(amount[1]) + "\n")
 
     print()
     print("Count Revisions: " + str(count))
     print("True positive count: {0}".format(str(true_positive_count)))
     print("Accuracy: %.4f" % ((true_positive_count / count) * 100) + '%')
 
-
+    result_file.write("Total, " + str(count) + ", " + str(true_positive_count) + "\n")
     result_file.close()
     trained_data_stat_to_csv()
 
@@ -99,21 +100,20 @@ def main():
 
 def trained_data_stat_to_csv(path_to_trained_data="../data/countries/"):
     total_size = 0
-    counrtry_dic = {}
+    country_dict = {}
     for file_name in os.listdir(path_to_trained_data):
         if file_name == '.DS_Store':
             continue
         size = os.path.getsize(path_to_trained_data+file_name)
         total_size += size
-        counrtry_dic[file_name] = size
+        country_dict[file_name] = size
 
-    print("Total size of trained data: "+str(total_size / 1000000) + " MB")
+    print("Total size of trained data: " + str(total_size / 1000000) + " MB")
 
     with open("../result/training_data_stat.csv", "w") as file:
         file.write("country, size\n")
-        for country in counrtry_dic.items():
-            #print(country)
-            file.write(country[0]+", " + str(country[1])+"\n")
+        for country in country_dict.items():
+            file.write(country[0] + ", " + str(country[1]) + "\n")
 
 
 if __name__ == '__main__':

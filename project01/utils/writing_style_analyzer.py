@@ -15,8 +15,8 @@ import pandas as pd
 
 import sys
 
-from os import listdir
-from os.path import isfile, join, getsize
+from os import listdir, makedirs
+from os.path import isfile, isdir, join, getsize
 
 vectorizer = None
 model = None
@@ -130,6 +130,10 @@ def train_model(train_set, mode='linear'):
         mode = 'linear'
 
     print("Saving model...")
+
+    # Create the model-folder if it does not exist
+    if not isdir("../data/model/"):
+        makedirs("../data/model/")
 
     pickle.dump(inner_model, open('../data/model/trained_model_' + mode, 'wb'))
 

@@ -1,5 +1,6 @@
 from genericpath import getsize
-from os import listdir
+from os import listdir, makedirs
+from os.path import isdir
 import os
 from os.path import isfile, join
 import pickle
@@ -40,7 +41,7 @@ def read_pickles(input_dir, corpus_dir):
         for revision in page.revisions:
             country = revision.country
 
-            # remove all usernames
+            # remove all user-names
             if "  " in country:
                 continue
 
@@ -74,6 +75,10 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
     :param nr_revisions:        number of revisions per country
     :return:                    pickle pages for every country
     """
+    # Create the test-picke-folder if it does not exist
+    if not isdir(test_pickle_dir):
+        makedirs(test_pickle_dir)
+
     country_ids = 0
     for file_name in os.listdir(corpus_dir):
         if file_name == '.DS_Store':
@@ -87,7 +92,8 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
         page.add_title(file_name)
         print("Process: "+file_name)
 
-        df = pd.read_csv(corpus_dir+file_name, sep="\t", dtype={'id': object, 'text': object})
+        df = pd.read_csv(corpus_dir + file_name, sep="\t", dtype={'id': object, 'text': object})
+
         # id of the first row
         country_ids += 1
 
@@ -100,7 +106,7 @@ def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chu
             test_content = ""
             if type(row) is str and sys.getsizeof(page) < chunksize:
                 for word in row.split():
-                    test_content += word+" "
+                    test_content += word + " "
 
                     if sys.getsizeof(test_content) > chunksize:
                         rev.set_diff_content(test_content)

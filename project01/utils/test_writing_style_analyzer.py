@@ -27,7 +27,7 @@ def main():
         if file_name == '.DS_Store':
             continue
 
-        if os.path.isdir("../data/test_pickles"+"/"+file_name):
+        if os.path.isdir("../data/test_pickles" + "/" + file_name):
             continue
 
         test_country_list.append(file_name)

@@ -55,6 +55,9 @@ def load_corpus(directory):
             if type(row) is str:
                 train_set[label].append({"label": label, "text": row})
 
+    print("Saving used_countries list ...")
+    pickle.dump(used_countries, open('../data/model/used_countries', 'wb'))
+
     return train_set
 
 
@@ -130,15 +133,12 @@ def train_model(train_set, mode='linear'):
         mode = 'linear'
 
     print("Saving model...")
-
     # Create the model-folder if it does not exist
     if not isdir("../data/model/"):
         makedirs("../data/model/")
-
     pickle.dump(inner_model, open('../data/model/trained_model_' + mode, 'wb'))
 
     print("Saving tfidf-vectorizers...")
-
     pickle.dump(inner_vectorizer, open('../data/model/vectorizer_' + mode, 'wb'))
 
 

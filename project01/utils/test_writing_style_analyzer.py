@@ -23,6 +23,8 @@ def main():
     prediction = []
     test_country_list = []
 
+    used_countries = pickle.load(open("../data/model/used_countries", 'rb'))
+
     for file_name in os.listdir("../data/test_pickles"):
         if file_name == '.DS_Store':
             continue
@@ -36,6 +38,12 @@ def main():
         # Iterate over all revisions, predict the geo-location and count the positive occurrences
         for revision in page.revisions:
             test_content = revision.diff_content
+
+            # country was not trained
+            test_country = revision.country
+            if not test_country in used_countries:
+                print(test_country + " not trained")
+
             predicted_geo_location = predict_geo_location(test_content)
 
             test.append(revision.country)

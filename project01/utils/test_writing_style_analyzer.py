@@ -73,7 +73,7 @@ def main():
     print("Countries with [Positive Count, True Positive Count]")
     print()
 
-    result_file.write("country, positive_count, true_positie_count\n")
+    result_file.write("country, positive_count, true_positive_count\n")
     for country, amount in country_occurrences.items():
         print(country + ': ' + str(amount))
         result_file.write(country+", "+str(amount[0])+", "+str(amount[1])+"\n")

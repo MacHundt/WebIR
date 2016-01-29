@@ -20,7 +20,7 @@ from os.path import isfile, isdir, join, getsize
 
 vectorizer = None
 model = None
-min_file_size = 40000
+min_file_size = 100000
 
 
 def load_corpus(directory):
@@ -41,7 +41,7 @@ def load_corpus(directory):
     for f in train_files:
         size_of_file = getsize(directory + '/' + f)
 
-        # A file needs to be at least 40KB big
+        # A file needs to be at least 100KB big
         if size_of_file < min_file_size:
             used_countries.remove(f)
             continue

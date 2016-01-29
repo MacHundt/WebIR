@@ -5,7 +5,7 @@ The file used for evaluation of our writing style analyser
 
 import pickle
 import os.path
-import pylab as pl
+import matplotlib.pylab as pl
 from sklearn.metrics import confusion_matrix
 
 from edit_extractor import Page, Revision

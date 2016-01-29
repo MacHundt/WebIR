@@ -1,11 +1,9 @@
-from genericpath import getsize
 from os import listdir, makedirs
 from os.path import isdir
 import os
 from os.path import isfile, join
 import pickle
 import pandas as pd
-import sys
 from edit_extractor import Page, Revision
 
 __author__ = 'wikipedia_project_group'
@@ -31,7 +29,7 @@ def read_pickles(input_dir, corpus_dir):
     # remove all corpus files, so that they will be created anew
     if not append:
         for file in os.path.isfile(corpus_dir):
-            os.remove(corpus_dir+file)
+            os.remove(corpus_dir + file)
 
     for f in train_files:
         if "Talk:" in f or ".DS_Store" in f:
@@ -64,58 +62,42 @@ def read_pickles(input_dir, corpus_dir):
                     file.write(str(countries_id_dic[country]) + '\t' + revision.diff_content + '\n')
 
 
-def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', chunksize=2000, nr_revisions=5):
+def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', nr_revisions=20):
     """
     This method read in test corpus csv files, and puts the all
     the text to a Page pickle. Countries with text smaller than filesize will be rejected,
     the rest will be trimmed to the same filesize.
     :param corpus_dir:          directory to csv corpus
     :param test_pickle_dir:     path to store the test pages
-    :param chunksize:           chunk size, text for every revision
     :param nr_revisions:        number of revisions per country
     :return:                    pickle pages for every country
     """
-    # Create the test-picke-folder if it does not exist
+    # Create the test-pickle-folder if it does not exist
     if not isdir(test_pickle_dir):
         makedirs(test_pickle_dir)
 
-    country_ids = 0
     for file_name in os.listdir(corpus_dir):
         if file_name == '.DS_Store':
             continue
 
-        size_of_file = getsize(corpus_dir+file_name)
-        if size_of_file < chunksize:
-            continue
+        df = pd.read_csv(corpus_dir + file_name, sep="\t", dtype={'id': object, 'text': object})
 
         page = Page()
         page.add_title(file_name)
-        print("Process: "+file_name)
-
-        df = pd.read_csv(corpus_dir + file_name, sep="\t", dtype={'id': object, 'text': object})
-
-        # id of the first row
-        country_ids += 1
 
         i = 0
-        rev = None
         for row in df['text']:
-            if i >= nr_revisions:
+            if i == nr_revisions:
                 break
-            rev = Revision(id, p_ip="", p_country=file_name, content="")
-            test_content = ""
-            if type(row) is str and sys.getsizeof(page) < chunksize:
-                for word in row.split():
-                    test_content += word + " "
 
-                    if sys.getsizeof(test_content) > chunksize:
-                        rev.set_diff_content(test_content)
-                        page.add_revision(rev)
-                        i += 1
-                        break
+            if type(row) is str:
+                rev = Revision(id, p_ip="", p_country=file_name, content="")
+                rev.set_diff_content(row)
+                page.add_revision(rev)
+                i += 1
 
-        if i >= nr_revisions:
-            page.add_revision(rev)
+        if i == nr_revisions:
+            print("Processed: " + file_name + " with " + str(len(page.revisions)) + " revisions")
             page.save_as_serialized_object(path_to_pickle=test_pickle_dir)
 
 

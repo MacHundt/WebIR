@@ -138,7 +138,7 @@ def train_model(train_set, mode='linear'):
         makedirs("../data/model/")
     pickle.dump(inner_model, open('../data/model/trained_model_' + mode, 'wb'))
 
-    print("Saving tfidf-vectorizers...")
+    print("Saving tfidf-vectorizer...")
     pickle.dump(inner_vectorizer, open('../data/model/vectorizer_' + mode, 'wb'))
 
 

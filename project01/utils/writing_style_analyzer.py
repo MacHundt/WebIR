@@ -73,9 +73,9 @@ def retrieve_pos_tags(text):
 
 def train_model(train_set, mode='linear'):
     """
-    Train the models, using 10-fold-cv and LibLinear classification.
+    Train the models, using 10-fold-cv and different classifications.
     :param train_set: The set that is used for training
-    :param mode: The that gets used for training
+    :param mode: The mode that gets used for training
     """
     global used_countries
 
@@ -147,7 +147,7 @@ def predict_geo_location(text, path='../data/model/', mode='linear'):
     Predicts the geo-location of a given text.
     :param text: The actual text
     :param path: The path to the dumps
-    :param mode: The model that gets used for predicting
+    :param mode: The mode that gets used for predicting
     :return: The most likeliest geo-location
     """
     global vectorizer, model

@@ -5,7 +5,7 @@ The file used for evaluation of our writing style analyser
 
 import pickle
 import os.path
-import pylab as pl
+import matplotlib.pylab as pl
 from sklearn.metrics import confusion_matrix
 
 from edit_extractor import Page, Revision
@@ -108,6 +108,7 @@ def test_countries_to_file(country_list, path="../result/"):
     with open(path+"test_countries", "w") as file:
         file.write(str(country_list))
         file.write("\n")
+
 
 def trained_data_stat_to_csv(path_to_trained_data="../data/countries/"):
     total_size = 0

@@ -1,0 +1,63 @@
+        text {
+        	font: 12px sans-serif;
+        }
+        svg {
+        	display: block;
+        	float: left;
+        }
+        #piechart {
+        	height: 550px !important;
+        	width: 550px !important;
+        }
+        #barchart {
+                margin-top: 100px;
+                padding-left: 400;
+                height: 550px !important;
+                width: 550px !important;
+        }
+        html, body {
+        	margin: 0px;
+        	padding: 0px;
+        	height: 100%;
+        	width: 100%;
+        }
+        .nvd3.nv-pie.nv-chart-donut2 .nv-pie-title {
+        	fill: rgba(70, 107, 168, 0.78);
+        }
+        .nvd3.nv-pie.nv-chart-donut1 .nv-pie-title {
+        	opacity: 0.4;
+        	fill: rgba(224, 116, 76, 0.91);
+        }
+
+        #header {
+                width:100%;
+                margin:auto;
+                background-image: url("../img/header.png")     ;
+                background-repeat: no-repeat;
+                background-color: #cccccc;
+        }
+        .vcenter {
+            display: inline-block;
+            vertical-align: middle;
+            float: none;
+    }
+    .col-lg-12{
+        top:40px;
+        bottom:0px;
+        border:4px solid green;
+}
+.jumbotron {
+    margin-bottom: 0px;
+    background-image: url(../img/header2.png);
+    background-position: 0% 25%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: white;
+    text-shadow: grey 0.3em 0.3em 0.3em;
+    text-align: right;
+}
+.thumb {
+    height: 75px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+}

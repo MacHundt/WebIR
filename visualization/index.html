@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="css/nv.d3.css" rel="stylesheet" type="text/css">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script> -->
+    <script src="js/d3.min.js" charset="utf-8"></script> 
+    <script src="js/jquery-2.2.0.min.js"></script>
+    <script src="js/geoWookieViz.js"></script>
+    <script src="js/nv.d3.js"></script>
+    <script src="js/stream_layers.js"></script>
+
+</head>
+<body class='with-3d-shadow with-transitions' >
+
+
+
+   <div class="container">
+  <div class="jumbotron">
+    <h1>Geo Wookie</h1> 
+    <p> Geolocated, wikipedia origin country composition analyzer</p> 
+    <p> Lukas Eichhorn, Michael Hundt, Bassel Khatib. </p>
+  </div>
+  <p>Select CSV files: </p> 
+
+        <input type="file" id="files" name="files[]" multiple />
+        <output id="list"></output>
+        <script>
+        //pie data (dicitonary)
+        // {key: "country", y: tp_count}, 
+        var analyzer_results = [];
+        // bar data (dictionary) 
+        // { 
+        //   "label" : "country_name" ,
+        //   "value" : file size
+        // } , 
+        var test_file_sizes = [];
+        function handleFileSelect(evt) {
+
+            var files = evt.target.files; // FileList object
+            
+            var analyzer_file = files[0];
+            var analyzer_file_bytes = files[0].size;
+            var sizes_file = files[1].size;
+            var sizes_file_bytes = files[1];
+
+                // files is a FileList of File objects. List some properties.
+                var output = [];
+                for (var i = 0, f; f = files[i]; i++) {
+                  output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                      f.size, ' bytes, last modified: ',
+                      f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                      '</li>');
+              }
+              document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+          }
+document.getElementById('files').addEventListener('change', handleFileSelect, false);
+// load charts
+start();
+</script> 
+</div> 
+   <div class="col-lg-2">
+    <div class="container">
+
+        <div>
+            <svg id="piechart" class="mypiechart"></svg>
+        </div>
+        <div>
+            <svg id="barchart" class="mypiechart"></svg>
+        </div>
+        <div id ="confusionMatrix">
+        </div>
+
+    </div>
+
+    </div>
+
+</body>
+</html>

@@ -99,7 +99,6 @@ def train_model(train_set, mode='linear'):
         for item in country_list:
             corpus.append(item['text'])
             classes.append(item['label'])
-            # tags.append(retrieve_pos_tags(item['text']))
 
     print()
     print("Size of corpus: " + str(sys.getsizeof(corpus)))
@@ -133,6 +132,7 @@ def train_model(train_set, mode='linear'):
         mode = 'linear'
 
     print("Saving model...")
+
     # Create the model-folder if it does not exist
     if not isdir("../data/model/"):
         makedirs("../data/model/")

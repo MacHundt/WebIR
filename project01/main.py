@@ -11,7 +11,6 @@ __author__ = 'wikipedia_project_group'
 class MainFrame(tkinter.Frame):
     gmaps_url = "https://www.google.de/maps/place/"
     result_country = ""
-    result_confidence = 0
 
     """
     constructor of the main frame
@@ -57,16 +56,14 @@ class MainFrame(tkinter.Frame):
         """
         variables to change:
         result_land
-        result_confidence
 
-        self.result_land, self.result_confidence = lukas_magic(input_text)
+        self.result_land = magic(input_text)
 
         just copy the above code under the input_text variable
         """
         try:
             input_text = self.text_box.get(1.0, tkinter.END)
             self.result_country = writing_style_analyzer.predict_geo_location(input_text, 'data/model/')
-            self.result_confidence = 0
 
             self.open_results()
         except ZeroDivisionError as e:
@@ -79,9 +76,6 @@ class MainFrame(tkinter.Frame):
 
         label_land = tkinter.Label(results_frame, text="Land: " + str(self.result_country))
         label_land.pack()
-
-        label_confidence = tkinter.Label(results_frame, text="Confidence: %.2f" % (self.result_confidence * 100) + '%')
-        label_confidence.pack()
 
         results_frame.show_map = tkinter.Button(results_frame)
         results_frame.show_map["text"] = "Show on Gmaps"

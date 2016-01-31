@@ -27,6 +27,12 @@
 
         <input type="file" id="files" name="files[]" multiple />
         <output id="list"></output>
+<span class="readBytesButtons">
+
+  <button>entire file</button>
+</span>
+<div id="byte_range"></div>
+<div id="byte_content"></div>
         <script>
         //pie data (dicitonary)
         // {key: "country", y: tp_count}, 
@@ -40,12 +46,11 @@
         function handleFileSelect(evt) {
 
             var files = evt.target.files; // FileList object
-            
+
             var analyzer_file = files[0];
             var analyzer_file_bytes = files[0].size;
-            var sizes_file = files[1].size;
             var sizes_file_bytes = files[1];
-
+                
                 // files is a FileList of File objects. List some properties.
                 var output = [];
                 for (var i = 0, f; f = files[i]; i++) {
@@ -56,9 +61,22 @@
               }
               document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
           }
-document.getElementById('files').addEventListener('change', handleFileSelect, false);
+         document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+
+  document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
+    if (evt.target.tagName.toLowerCase() == 'button') {
+      var startByte = evt.target.getAttribute('data-startbyte');
+      var endByte = evt.target.getAttribute('data-endbyte');
+      readBlob(startByte, endByte);
+      var pieChartData = 0;
+      var barChartData = 0;
+      start(pieChartData, barChartData);
+    }
+  }, false); 
+
+
 // load charts
-start();
 </script> 
 </div> 
    <div class="col-lg-2">

@@ -11,7 +11,7 @@ import time
 __author__ = 'wikipedia_project_group'
 
 
-path_to_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history2"
+path_to_dump = "../data/wiki_dump/enwiki-20151102-pages-meta-history3.xml-p000052031p000055000"
 test = "../data/wiki_dump/test_page"
 
 # USE TEST data
@@ -69,7 +69,7 @@ def extract_edits(start_at=0):
     # test_file = open(test, "w")
 
     # read through wiki dump
-    with open(path_to_dump) as fp:
+    with open(path_to_dump, encoding="utf8") as fp:
         for linecount, line in enumerate(fp):
 
             # skip start_at lines
@@ -511,6 +511,10 @@ class Page:
         :param path_to_pickle: String
         :return: void
         """
+        # Create the pickle folder if it does not exist
+        if not os.path.isdir(path_to_pickle):
+            os.makedirs(path_to_pickle)
+
         pickle.dump(self, open(path_to_pickle + self.title, "wb"))
 
 

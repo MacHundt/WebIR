@@ -136,10 +136,11 @@ def train_model(train_set, mode='linear'):
     # Create the model-folder if it does not exist
     if not isdir("../data/model/"):
         makedirs("../data/model/")
+
     pickle.dump(inner_model, open('../data/model/trained_model_' + mode, 'wb'))
 
     print("Saving tfidf-vectorizer...")
-    pickle.dump(inner_vectorizer, open('../data/model/vectorizer_' + mode, 'wb'))
+    pickle.dump(inner_vectorizer, open('../data/model/vectorizer', 'wb'))
 
 
 def predict_geo_location(text, path='../data/model/', mode='linear'):
@@ -153,7 +154,7 @@ def predict_geo_location(text, path='../data/model/', mode='linear'):
     global vectorizer, model
 
     if vectorizer is None or model is None:
-        vectorizer = pickle.load(open(path + 'vectorizer_' + mode, 'rb'))
+        vectorizer = pickle.load(open(path + 'vectorizer', 'rb'))
         model = pickle.load(open(path + 'trained_model_' + mode, 'rb'))
 
     corpus = [text]

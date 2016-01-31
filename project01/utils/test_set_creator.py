@@ -62,7 +62,7 @@ def read_pickles(input_dir, corpus_dir):
                     file.write(str(countries_id_dic[country]) + '\t' + revision.diff_content + '\n')
 
 
-def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', nr_revisions=50):
+def create_test_pickles(corpus_dir, test_pickle_dir='../data/test_pickles/', nr_revisions=40):
     """
     This method read in test corpus csv files, and puts the all
     the text to a Page pickle. Countries with text smaller than filesize will be rejected,

@@ -36,14 +36,26 @@
   <div id="byte_range"></div>
   <div id="byte_content"></div>
   <script>
+  var gFiles;
   function handleFileSelect(evt) {
+    //a small bug. files[0] is not consistent in the position of the files
+    //fixing this with cases
+
+    var analyzer_file_name = "result_stat.csv" ;
 
             var files = evt.target.files; // FileList object
+            if (files[0].name = analyzer_file_name) {
+              var analyzer_file = files[0];
+              var analyzer_file_bytes = files[0].size;
+              var sizes_file_bytes = files[1];
+            } else {
+              var analyzer_file = files[1];
+              var analyzer_file_bytes = files[1].size;
+              var sizes_file_bytes = files[0];
 
-            var analyzer_file = files[0];
-            var analyzer_file_bytes = files[0].size;
-            var sizes_file_bytes = files[1];
-
+            }
+            gFiles = files;
+            console.log(gFiles);
                 // files is a FileList of File objects. List some properties.
                 // great help from http://www.html5rocks.com/en/tutorials/file/dndfiles/
                 var output = [];

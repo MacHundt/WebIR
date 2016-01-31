@@ -1,170 +1,169 @@
 country, size
-countries_all, 5780
-Sri Lanka, 75576
-Romania, 560632
-Aruba, 35872
-Ukraine, 142503
-Bulgaria, 207227
-Peru, 106255
-Czech Republic, 81881
-Sweden, 1968097
-Rwanda, 1719
-Cameroon, 2565
-Azerbaijan, 52086
-Spain, 1997999
-Republic of Korea, 172774
-Afghanistan, 4002
-Belarus, 8439
-Iceland, 10876
-Botswana, 6255
-Cambodia, 6373
-Saudi Arabia, 245587
-Guadeloupe, 607
-Slovenia, 56611
-Egypt, 107241
-Slovak Republic, 36390
-Belize, 11117
-Uzbekistan, 1903
-Zambia, 1595
-Poland, 415980
-Morocco, 161388
-Austria, 100154
 American Samoa, 321
-Jamaica, 98811
-Burkina Faso, 1311
-Andorra, 11569
-Costa Rica, 9559
-Cyprus, 12109
-Iraq, 26307
-Lebanon, 18871
-Kuwait, 33666
-China, 162296
-Israel, 239884
-Guernsey, 2207
-Brazil, 660629
-Hashemite Kingdom of Jordan, 32285
-United Kingdom, 15218674
-Lesotho, 31820
-Jersey, 6493
-Guyana, 386
-Monaco, 12827
-Vietnam, 67189
-Norway, 233814
-Maldives, 1954
-Grenada, 482
-test, 3468
-South Africa, 129636
-Argentina, 144944
-Bangladesh, 133987
-Germany, 1930837
-Nigeria, 108075
-Guatemala, 46631
-Ethiopia, 4224
-Tanzania, 9173
-Serbia, 115699
-Antigua and Barbuda, 21661
-Australia, 7866672
-Mexico, 199723
-Ecuador, 271373
-Uganda, 5034
-Portugal, 104538
-Macedonia, 25378
-Greece, 384794
-Haiti, 6812
-Philippines, 1175368
-Puerto Rico, 136675
-Macao, 205833
-Trinidad and Tobago, 9217
-Angola, 1015
-Laos, 1702
-Fiji, 10615
-New Zealand, 1123088
-Ireland, 462416
-Finland, 326668
-Malaysia, 340775
-Netherlands, 2225415
-British Virgin Islands, 4323
-Japan, 302258
-Libya, 1618
-France, 565364
-Saint Vincent and the Grenadines, 842
-United States, 62565769
-Northern Mariana Islands, 601
-Gibraltar, 917
-Anguilla, 1726
-Mongolia, 811
-Albania, 107862
-Chile, 52999
-Ghana, 35873
-Uruguay, 2664
-Pakistan, 549402
-Djibouti, 532
-Malta, 477386
-Bolivia, 15437
-Tunisia, 13051
-Faroe Islands, 1536
-El Salvador, 5869
-Estonia, 169170
-Hungary, 102717
-Colombia, 147462
-Dominican Republic, 19424
-Taiwan, 72798
-Sudan, 6932
-Mauritius, 45743
-Kazakhstan, 3146
-Panama, 38604
-U.S. Virgin Islands, 941
-Myanmar [Burma], 733
-Kenya, 30988
-Sierra Leone, 1881
-Syria, 2535
-Georgia, 13557
-Bahamas, 30073
-Palestine, 14947
-Nicaragua, 2736
-Benin, 316
-Saint Lucia, 364
-Isle of Man, 6695
-Bermuda, 3872
-Curaçao, 707
-Barbados, 4866
-Honduras, 26685
-Canada, 7598332
-Kyrgyzstan, 575
-Armenia, 11692
-Latvia, 19198
-São Tomé and Príncipe, 44698
-Congo, 7457
-Croatia, 32441
-Saint Kitts and Nevis, 2834
-Singapore, 512575
-Brunei, 39268
-Luxembourg, 177580
-Bosnia and Herzegovina, 169805
-Turkey, 544027
-Denmark, 219810
-Solomon Islands, 8560
-Russia, 189519
-Thailand, 491918
-Namibia, 1728
-United Arab Emirates, 100515
-Iran, 96155
-Bahrain, 30150
-Montenegro, 3803
 Yemen, 27956
-Réunion, 3869
-Paraguay, 9278
-Dominica, 428
-Republic of Moldova, 37198
-Qatar, 87467
-Oman, 9347
-Nepal, 37336
-Switzerland, 250537
-Indonesia, 194555
-Venezuela, 104259
-Algeria, 96856
-Italy, 500691
+Macao, 205833
+Estonia, 169170
 Hong Kong, 342317
+Tunisia, 13051
+Guatemala, 46631
+Cyprus, 12109
+Reunion, 3869
+Honduras, 26685
+Spain, 1997999
+Israel, 239884
+Turkey, 544027
+Puerto Rico, 136675
+Austria, 100154
+Czech Republic, 81881
+Colombia, 147462
+Iceland, 10876
+Lesotho, 31820
+Denmark, 219810
+Dominican Republic, 19424
+Kenya, 30988
+Malaysia, 340775
+Albania, 107862
+Andorra, 11569
+Guyana, 386
+Algeria, 96856
+United Arab Emirates, 100515
+Congo, 7457
+U.S. Virgin Islands, 941
+Sao Tome and Principe, 44698
+Bolivia, 15437
+United Kingdom, 15218674
+Norway, 233814
+Cameroon, 2565
+test, 40960
+Barbados, 4866
+Costa Rica, 9559
+Nepal, 37336
+New Zealand, 1123088
+Faroe Islands, 1536
+Slovak Republic, 36390
+Saudi Arabia, 245587
+Lebanon, 18871
+Aruba, 35872
+Botswana, 6255
 Belgium, 472645
-India, 2610704
+Bosnia and Herzegovina, 169805
+Haiti, 6812
+Iran, 96155
 Republic of Lithuania, 28828
+Mongolia, 811
+Laos, 1702
+Belarus, 8439
+Ukraine, 142503
+Ghana, 35873
+Bermuda, 3872
+Philippines, 1175368
+Palestine, 14947
+Mexico, 199723
+Burkina Faso, 1311
+Nicaragua, 2736
+Finland, 326668
+Monaco, 12827
+Canada, 7598332
+Australia, 7866672
+Syria, 2535
+Thailand, 491918
+Republic of Moldova, 37198
+Portugal, 104538
+Taiwan, 72798
+Switzerland, 250537
+Uruguay, 2664
+Saint Lucia, 364
+Dominica, 428
+Myanmar [Burma], 733
+Ecuador, 271373
+Montenegro, 3803
+Brazil, 660629
+Nigeria, 108075
+Venezuela, 104259
+Uzbekistan, 1903
+Macedonia, 25378
+Romania, 560632
+Kazakhstan, 3146
+Brunei, 39268
+Peru, 106255
+Sierra Leone, 1881
+Azerbaijan, 52086
+Namibia, 1728
+Libya, 1618
+Pakistan, 549402
+Singapore, 512575
+Maldives, 1954
+Morocco, 161388
+Iraq, 26307
+Paraguay, 9278
+Sri Lanka, 75576
+Grenada, 482
+Netherlands, 2225415
+Hashemite Kingdom of Jordan, 32285
+Russia, 189519
+Guadeloupe, 607
+Solomon Islands, 8560
+Guernsey, 2207
+Bahrain, 30150
+Slovenia, 56611
+Luxembourg, 177580
+Djibouti, 532
+Gibraltar, 917
+Isle of Man, 6695
+Malta, 477386
+Croatia, 32441
+Sweden, 1968097
+Curacao, 707
+Oman, 9347
+Uganda, 5034
+South Africa, 129636
+Kuwait, 33666
+Cambodia, 6373
+Qatar, 87467
+Armenia, 11692
+Northern Mariana Islands, 601
+Ethiopia, 4224
+Poland, 415980
+British Virgin Islands, 4323
+Rwanda, 1719
+Chile, 52999
+Kyrgyzstan, 575
+Angola, 1015
+United States, 62565769
+Fiji, 10615
+El Salvador, 5869
+Georgia, 13557
+Afghanistan, 4002
+Bahamas, 30073
+Zambia, 1595
+Greece, 384794
+Mauritius, 45743
+Vietnam, 67189
+Jamaica, 98811
+Argentina, 144944
+Italy, 500691
+Anguilla, 1726
+China, 162296
+Saint Kitts and Nevis, 2834
+India, 2610704
+France, 565364
+Serbia, 115699
+Belize, 11117
+Trinidad and Tobago, 9217
+Bulgaria, 207227
+Hungary, 102717
+Germany, 1930837
+Panama, 38604
+Sudan, 6932
+Japan, 302258
+Ireland, 462416
+Antigua and Barbuda, 21661
+Indonesia, 194555
+Bangladesh, 133987
+Egypt, 107241
+Saint Vincent and the Grenadines, 842
+Republic of Korea, 172774
+Jersey, 6493
+Benin, 316
+Latvia, 19198
+Tanzania, 9173

@@ -10,7 +10,7 @@
   <!-- for the grid -->
   <link href="css/materialize.css" rel="stylesheet" type="text/css">
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script> -->
-  <script src="js/d3.min.js" charset="utf-8"></script> 
+  <script src="js/d3.min.js" charset="utf-8"></script>
   <script src="js/jquery-2.2.0.min.js"></script>
   <script src="js/geoWookieViz.js"></script>
   <script src="js/nv.d3.js"></script>
@@ -22,10 +22,10 @@
 
  <div class="container shadow">
   <div class="jumbotron ">
-    <h1>GeoWookie</h1> 
-    <p align="right"> L. Eichhorn, M. Hundt, B. Khatib. </p>
+    <h1>GeoWookie</h1>
+    <p align="right"> L. Eichkorn, M. Hundt, B. Khatib. </p>
   </div>
-  <p>Select CSV files: </p> 
+  <p>Select CSV files: </p>
 
   <input type="file" id="files" name="files[]" multiple />
   <output id="list"></output>
@@ -68,23 +68,23 @@
                 document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
               }
               document.getElementById('files').addEventListener('change', handleFileSelect, false);
-              //visualize button + results csv text dump to container 
+              //visualize button + results csv text dump to container
               document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
                 if (evt.target.tagName.toLowerCase() == 'button') {
                   var startByte = evt.target.getAttribute('data-startbyte');
                   var endByte = evt.target.getAttribute('data-endbyte');
-                  //  magic happens here - read blob reads the files and passes 
+                  //  magic happens here - read blob reads the files and passes
                   //  them to the preprocessor functions
-                  //  start() displays the results 
+                  //  start() displays the results
                   readBlob(startByte, endByte);
                   start();
                 }
-              }, false); 
+              }, false);
 
 
-//chart containers 
-</script> 
-</div> 
+//chart containers
+</script>
+</div>
 <!-- container starts here -->
 <div class="container shadow">
 
@@ -124,7 +124,7 @@
 
 
   <!-- container ends here -->
-</div> 
+</div>
 
 
 

@@ -10,27 +10,55 @@ var barChartBlob;
 var processedPieData = [];
 var processedBarData = [];
 var accuracy = "Not Set";
+var sliceSizeMax = 7;
 
+// function sortNumber(a,b) {
+//    return a - b;
+// }
+// function sortJsObject(object) {
+//     var dict = object;
+
+//     var keys = [];
+//     for(var key in dict) { 
+//        keys[keys.length] = key;
+//      }
+
+//      var values = [];     
+//      for(var i = 0; i < keys.length; i++) {
+//          values[values.length] = dict[keys [i]];
+//      }
+//      var sortedValues = values.sort(sortNumber);
+//      console.log(sortedValues);
+//      return sortedValues;
+// }
+
+// this is needed to sort values as integers
 function processPieBlob(text) {
   //process accuracy first
+
   var totLine = text[text.length-2].split(",");
+  var temp = [];
   accuracy = (totLine[2] / totLine[1])*100 ;
   accuracy = accuracy.toString().substring(0,5).concat("%");
 
   // continue to the rest
   var startAt = 1;
-  var endAt = 7;
+  var endAt = text.length-2;
   for (var i = startAt; i < endAt; i += 1) {
     var line = text[i].split(",");
     var countryName = line[0];
     var truePositives = line[1];
-    console.log(line, countryName, truePositives);
-    processedPieData.push({
+//    console.log(line, countryName, truePositives);
+    temp.push({
       key: countryName,
       y: parseInt(truePositives)
     });
   }
-}  
+
+//  processedPieData = temp;
+  processedPieData = temp.sort(function(a,b){return a["y"] - b["y"];}).reverse().slice(0,sliceSizeMax); 
+  console.log(processedPieData)
+  }
 
 function processChartBlob(text) {
   var midRes = [];
@@ -71,7 +99,7 @@ function readBlob(opt_startByte, opt_stopByte) {
   var stop2 = parseInt(opt_stopByte) || file2.size - 1;
   var reader1 = new FileReader();
   var reader2 = new FileReader();
-  console.log(file1, file2, start1, stop1, start2, stop2)
+//  console.log(file1, file2, start1, stop1, start2, stop2)
 
     // If we use onloadend, we need to check the readyState.
 
@@ -102,7 +130,8 @@ function readBlob(opt_startByte, opt_stopByte) {
   }
 
 
-  function buildCharts(pieChartData, barChartData) {
+  function buildCharts() {
+//    console.log(processedPieData)
     var piedata = processedPieData;
     var barchartdata = processedBarData;
 
@@ -125,7 +154,7 @@ function readBlob(opt_startByte, opt_stopByte) {
             chart1.title(accuracy);
             chart1.pie.donutLabelsOutside(true).donut(true);
             d3.select("#piechart")
-            .datum(piedata)
+            .datum(processedPieData)
             .transition().duration(1200)
             .call(chart1);
             return chart1;
@@ -171,6 +200,6 @@ function start()
   makeTitleTextVisible();
   // make matrix png visible
   makeMatrixVisible();
-  console.log("==========");
+//  console.log("==========");
 }
 

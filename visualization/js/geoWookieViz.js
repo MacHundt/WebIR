@@ -95,10 +95,10 @@ function readBlob(opt_startByte, opt_stopByte) {
         ' of ', file2.size, ' byte file'].join('');
       }
     };
-    blob1 = file1.slice(start1, stop1 + 1);
     blob2 = file2.slice(start2, stop2 + 1);
-    var barChartData = reader1.readAsText(blob1);
+    blob1 = file1.slice(start1, stop1 + 1);
     var pieChartData = reader2.readAsText(blob2);
+    var barChartData = reader1.readAsText(blob1);
   }
 
 
@@ -136,6 +136,8 @@ function readBlob(opt_startByte, opt_stopByte) {
       var chart = nv.models.discreteBarChart()
       .x(function(d) { return d.label })
       .y(function(d) { return d.value })
+      .width(width)
+      .height(height)
 //      .staggerLabels(true)
 //    .tooltips(false)
 .showValues(true)

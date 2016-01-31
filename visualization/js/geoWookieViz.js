@@ -42,8 +42,8 @@ function processChartBlob(text) {
     var countryName = line[0];
     var bytes = line[1];
     midRes.push({
-//      label: countryName,
-      label: counter,
+      label: countryName,
+      // label: counter,
       // megabytes
       value: parseInt(bytes)/1000000
     });
@@ -132,15 +132,15 @@ function readBlob(opt_startByte, opt_stopByte) {
           });
 
 //bar chart
-    nv.addGraph(function() {
-      var chart = nv.models.discreteBarChart()
-      .x(function(d) { return d.label })
-      .y(function(d) { return d.value })
-      .width(width)
-      .height(height)
+nv.addGraph(function() {
+  var chart = nv.models.discreteBarChart()
+  .x(function(d) { return d.label })
+  .y(function(d) { return d.value })
+  .width(width)
+  .height(height)
 //      .staggerLabels(true)
 //    .tooltips(false)
-.showValues(true)
+.showValues(false)
 
 d3.select('#barchart')
 .datum(barchartdata)
@@ -152,11 +152,19 @@ nv.utils.windowResize(chart.update);
 
 return chart;
 });
-  }
+}
 
+function makeTitleTextVisible() {
+  var className = "titleText";
+  document.getElementsByClassName("hide-text")[0].className = "titleText";
+  document.getElementsByClassName("hide-text")[0].className = "titleText";
+}
+//toggle results title text on and off 
 function start()
 {                
-    buildCharts();
-    console.log("==========");
+  buildCharts();
+  makeTitleTextVisible();
+  
+  console.log("==========");
 }
 

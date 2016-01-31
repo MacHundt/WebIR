@@ -4119,12 +4119,12 @@ nv.models.discreteBarChart = function() {
         , height = null
         , color = nv.utils.getColor()
 	, showLegend = false
-        , showXAxis = true
+        , showXAxis = false 
         , showYAxis = true
         , rightAlignYAxis = false
-        , staggerLabels = false
+        , staggerLabels = true 
         , wrapLabels = false
-        , rotateLabels = 0
+        , rotateLabels = 1
         , x
         , y
         , noData = null
@@ -4134,7 +4134,7 @@ nv.models.discreteBarChart = function() {
 
     xAxis
         .orient('bottom')
-        .showMaxMin(false)
+        .showMaxMin(true)
         .tickFormat(function(d) { return d })
     ;
     yAxis
@@ -4144,7 +4144,7 @@ nv.models.discreteBarChart = function() {
 
     tooltip
         .duration(0)
-        .headerEnabled(false)
+        .headerEnabled(true)
         .valueFormatter(function(d, i) {
             return yAxis.tickFormat()(d, i);
         })

@@ -7,41 +7,36 @@
   <link href="css/style.css" rel="stylesheet" type="text/css">
   <!-- jumbotron -->
   <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <!-- for the grid 
-       could have used bootstrap for everything
-       but i dont know how to do everything with
-       bootstrap. saving time by doing what i know. 
-     -->
-     <link href="css/materialize.css" rel="stylesheet" type="text/css">
-     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script> -->
-     <script src="js/d3.min.js" charset="utf-8"></script> 
-     <script src="js/jquery-2.2.0.min.js"></script>
-     <script src="js/geoWookieViz.js"></script>
-     <script src="js/nv.d3.js"></script>
-     <script src="js/stream_layers.js"></script>
-
-   </head>
-   <body class='with-3d-shadow with-transitions' >
+  <!-- for the grid -->
+  <link href="css/materialize.css" rel="stylesheet" type="text/css">
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script> -->
+  <script src="js/d3.min.js" charset="utf-8"></script> 
+  <script src="js/jquery-2.2.0.min.js"></script>
+  <script src="js/geoWookieViz.js"></script>
+  <script src="js/nv.d3.js"></script>
+  <script src="js/stream_layers.js"></script>
+</head>
+<body class='with-3d-shadow with-transitions' >
 
 
 
-     <div class="container shadow">
-      <div class="jumbotron ">
-        <h1>GeoWookie</h1> 
-        <p align="right"> L. Eichhorn, M. Hundt, B. Khatib. </p>
-      </div>
-      <p>Select CSV files: </p> 
+ <div class="container shadow">
+  <div class="jumbotron ">
+    <h1>GeoWookie</h1> 
+    <p align="right"> L. Eichhorn, M. Hundt, B. Khatib. </p>
+  </div>
+  <p>Select CSV files: </p> 
 
-      <input type="file" id="files" name="files[]" multiple />
-      <output id="list"></output>
-      <span class="readBytesButtons">
+  <input type="file" id="files" name="files[]" multiple />
+  <output id="list"></output>
+  <span class="readBytesButtons">
 
-        <button>Visualize</button>
-      </span>
-      <div id="byte_range"></div>
-      <div id="byte_content"></div>
-      <script>
-      function handleFileSelect(evt) {
+    <button>Visualize</button>
+  </span>
+  <div id="byte_range"></div>
+  <div id="byte_content"></div>
+  <script>
+  function handleFileSelect(evt) {
 
             var files = evt.target.files; // FileList object
 
@@ -96,8 +91,8 @@
   <hr class="style-four"></hr>
   <div class="row ">
     <div class="col s6 ">
-      <div class="hide-image"> <h2> Confusion Matrix: </h2></div>
-      <div class="empty-image">
+      <div class="hide-text"> <h2> Confusion Matrix: </h2></div>
+      <div class="hide-image">
 
       </div>
     </div>
@@ -123,8 +118,6 @@
 
 </body>
 <script>
- // document.getElementsByClassName("titleText")[0].style.overflow = "hidden";
- // document.getElementsByClassName("titleText")[1].style.overflow = "hidden";
- </script>
+</script>
 
- </html>
+</html>

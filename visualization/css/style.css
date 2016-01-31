@@ -97,12 +97,23 @@ div.titleText {
     white-space: nowrap;
     overflow: hidden;  
 }
+div.show-image {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+   content:url(../../project01/result/cm.png); 
+}
 div.hide-text {
     text-indent: 100%;
     white-space: nowrap;
     overflow: hidden;
 }
 
+div.hide-image {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
 h2 {
     font: 15px "Courier New", Courier, monospace;
 }

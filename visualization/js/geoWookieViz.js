@@ -158,13 +158,19 @@ function makeTitleTextVisible() {
   var className = "titleText";
   document.getElementsByClassName("hide-text")[0].className = "titleText";
   document.getElementsByClassName("hide-text")[0].className = "titleText";
+  document.getElementsByClassName("hide-text")[0].className = "titleText";
+}
+function makeMatrixVisible() {
+  document.getElementsByClassName("hide-image")[0].className = "show-image";
 }
 //toggle results title text on and off 
 function start()
 {                
   buildCharts();
+  //make title text for segments visible
   makeTitleTextVisible();
-  
+  // make matrix png visible
+  makeMatrixVisible();
   console.log("==========");
 }
 

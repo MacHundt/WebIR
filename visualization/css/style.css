@@ -11,13 +11,13 @@ svg {
 #piechart {
     margin-top: 10%;
     margin-left: 40%;
-    height: 350px !important;
+    height: 450px !important;
     width: 550px !important;
 }
 #barchart {
     margin-top: 10%;
     margin-left: 40%;
-    height: 350px !important;
+    height: 500px !important;
     width: 650px !important;
 }
 

@@ -18,7 +18,7 @@ var processedBarData = [];
 var accuracy = "Not Set";
 
 // how many results do we want to visualize
-var sliceSizeMax = 5;
+var sliceSizeMax = 6;
 // after splitting the array on spaces, 
 // the first entry is the header
 // so we skip the text[0] and start at text[1]

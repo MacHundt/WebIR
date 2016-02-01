@@ -83,6 +83,7 @@ def main():
         result_file.write(country + ", " + str(amount[0]) + ", " + str(amount[1]) + "\n")
 
     result_file.write("Total, " + str(count) + ", " + str(true_positive_count) + "\n")
+    result_file.write("F-Score, " + str(f1_score(test, prediction, average='macro') * 100) + ", " + str(-1) + "\n")
     result_file.close()
     test_countries_to_file(test_country_list)
 

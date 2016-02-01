@@ -6,7 +6,7 @@ The file used for evaluation of our writing style analyser
 import pickle
 import os.path
 import matplotlib.pylab as pl
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, f1_score
 
 from edit_extractor import Page, Revision
 from writing_style_analyzer import predict_geo_location
@@ -90,6 +90,7 @@ def main():
     print("Count Revisions: " + str(count))
     print("True positive count: {0}".format(str(true_positive_count)))
     print("Accuracy: %.4f" % ((true_positive_count / count) * 100) + '%')
+    print("F1-Score with macro-average: %.4f" % (f1_score(test, prediction, average='macro') * 100) + '%')
 
     cm = confusion_matrix(test, prediction, test_country_list)
 

@@ -99,7 +99,7 @@ div.titleText {
 }
 div.show-image {
     display:block;
-    margin-left: auto;
+    margin-left: 30%;
     margin-right: auto;
    content:url(../../project01/result/cm.png); 
 }

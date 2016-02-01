@@ -1,48 +1,49 @@
 country, positive_count, true_positive_count
-Portugal, 3, 2
-United Kingdom, 167, 6
-Pakistan, 5, 5
-Mexico, 2, 1
+Norway, 4, 2
+India, 29, 1
 Bangladesh, 1, 0
-Denmark, 12, 6
-Greece, 5, 1
-Peru, 1, 0
-Brazil, 16, 4
-Italy, 13, 5
-New Zealand, 4, 0
-Austria, 1, 0
-South Africa, 2, 0
-Canada, 40, 0
-Finland, 3, 0
+Malaysia, 2, 1
+France, 10, 2
+China, 1, 0
+Israel, 1, 1
+Colombia, 1, 0
 Republic of Korea, 3, 0
-Thailand, 18, 15
+United States, 972, 33
 Japan, 2, 1
-Bulgaria, 1, 0
-Belgium, 2, 1
+Australia, 41, 13
+Greece, 5, 1
+Malta, 2, 0
+South Africa, 2, 0
+Ireland, 4, 2
+New Zealand, 4, 0
+Sweden, 18, 1
 Macao, 34, 34
+Austria, 1, 0
+Bosnia and Herzegovina, 2, 0
+Italy, 13, 5
+Romania, 3, 0
+Finland, 3, 0
+Turkey, 6, 5
+Philippines, 6, 5
+Peru, 1, 0
+United Kingdom, 167, 6
+Russia, 1, 0
+Hong Kong, 11, 7
+Saudi Arabia, 1, 0
+Belgium, 2, 1
+Pakistan, 5, 5
+Germany, 33, 4
+Poland, 5, 3
 Taiwan, 3, 3
 Spain, 18, 4
-Romania, 3, 0
-Israel, 1, 1
-Australia, 41, 13
-Netherlands, 9, 2
-Malaysia, 2, 1
-Turkey, 6, 5
-Norway, 4, 2
-Malta, 2, 0
-United States, 972, 33
-Philippines, 6, 5
-Colombia, 1, 0
-Germany, 33, 4
-Sweden, 18, 1
-Hong Kong, 11, 7
+Canada, 40, 0
 Switzerland, 2, 0
-Russia, 1, 0
-India, 29, 1
-China, 1, 0
-Poland, 5, 3
-Bosnia and Herzegovina, 2, 0
-Saudi Arabia, 1, 0
-France, 10, 2
-Ireland, 4, 2
+Netherlands, 9, 2
+Bulgaria, 1, 0
+Portugal, 3, 2
+Brazil, 16, 4
+Mexico, 2, 1
+Thailand, 18, 15
+Denmark, 12, 6
 Total, 1520, 170
+F-Score, 9.95359230641, -1

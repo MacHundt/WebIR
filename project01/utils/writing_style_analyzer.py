@@ -81,8 +81,8 @@ def train_model(train_set, mode='linear'):
 
     # Create two blocks of features, word anc character n-grams, size of 2
     # We can also append here multiple other features in general
-    word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=10000)
-    char_vector = TfidfVectorizer(analyzer="char", ngram_range=(2, 3), binary=False, min_df=0, max_features=10000)
+    word_vector = TfidfVectorizer(analyzer="word", ngram_range=(2, 2), binary=False, max_features=40000)
+    char_vector = TfidfVectorizer(analyzer="char", ngram_range=(2, 3), binary=False, min_df=0, max_features=40000)
 
     # Our vectors are the feature union of word/char n-grams
     inner_vectorizer = FeatureUnion([("chars", char_vector), ("words", word_vector)])

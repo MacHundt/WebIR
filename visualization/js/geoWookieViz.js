@@ -11,11 +11,16 @@
 
 // the blobs (file dumps) and the data 
 // (processed file dumps) go into these babies
+// ptr - taking internal variables to the
+// main scope for testing with the console
+var ptr;
 var pieChartBlob;
 var barChartBlob;
 var processedPieData = [];
 var processedBarData = [];
 var accuracy = "Not Set";
+var fScore = "Not Set"
+
 
 // how many results do we want to visualize
 var sliceSizeMax = 6;
@@ -23,25 +28,33 @@ var sliceSizeMax = 6;
 // the first entry is the header
 // so we skip the text[0] and start at text[1]
 var startAt = 1;
-// n is [], n-1 is Total field - needed to calc. accuracy.
-var skipEnd = 2;
+// n is [], n-1 is Total field, n-2 is F score - needed to calc. accuracy.
+var skipEnd = 3;
 
 
 // this is needed to sort values as integers
 function processPieBlob(text) {
   //process accuracy first
 
-  var totLine = text[text.length-2].split(",");
+  var totLine = text[text.length-3].split(",");
   console.log(JSON.stringify(text));
   var temp = [];
+
   accuracy = (totLine[2] / totLine[1])*100 ;
   accuracy = accuracy.toString().substring(0,5).concat("%");
+  fScore = text[text.length-2].split(",")[1].substring(0,5).concat("%");
+  console.log("za f score",fScore);
 
   // continue to the rest
   var endAt = text.length-2;
   for (var i = startAt; i < endAt; i += 1) {
     var line = text[i].split(",");
     var countryName = line[0];
+    // could be refined by having a global "forbidden" variable
+    if ((countryName == "F-Score") || (countryName == "Total")) {
+      console.log("found fscore and/or total");
+      continue;
+    }
     // line[1] is retrieved
     // line[0] is true positives 
     var truePositives = line[2];
@@ -53,6 +66,16 @@ function processPieBlob(text) {
   }
 
 //  processedPieData = temp;
+
+  ptr = temp.sort(
+    function(a,b) {
+      // pie array has lable: and y:
+      return a["y"] - b["y"];
+    })
+  .reverse()
+  .slice(0); 
+
+
   processedPieData = temp.sort(
     function(a,b) {
       // pie array has lable: and y:
@@ -164,7 +187,7 @@ function readBlob(opt_startByte, opt_stopByte) {
       .padAngle(.08)
       .cornerRadius(10)
             .id('donut1'); // allow custom CSS for this one svg
-            chart1.title(accuracy);
+            chart1.title(accuracy.concat("\n").concat(fScore));
             chart1.pie.donutLabelsOutside(true).donut(true);
             d3.select("#piechart")
             .datum(processedPieData)

@@ -1,169 +1,184 @@
 country, size
-American Samoa, 321
-Yemen, 27956
-Macao, 205833
-Estonia, 169170
-Hong Kong, 342317
-Tunisia, 13051
-Guatemala, 46631
-Cyprus, 12109
-Reunion, 3869
-Honduras, 26685
-Spain, 1997999
-Israel, 239884
-Turkey, 544027
-Puerto Rico, 136675
-Austria, 100154
-Czech Republic, 81881
-Colombia, 147462
-Iceland, 10876
-Lesotho, 31820
-Denmark, 219810
-Dominican Republic, 19424
-Kenya, 30988
-Malaysia, 340775
-Albania, 107862
-Andorra, 11569
-Guyana, 386
-Algeria, 96856
-United Arab Emirates, 100515
-Congo, 7457
-U.S. Virgin Islands, 941
-Sao Tome and Principe, 44698
-Bolivia, 15437
-United Kingdom, 15218674
-Norway, 233814
-Cameroon, 2565
-test, 40960
-Barbados, 4866
-Costa Rica, 9559
-Nepal, 37336
-New Zealand, 1123088
-Faroe Islands, 1536
-Slovak Republic, 36390
-Saudi Arabia, 245587
-Lebanon, 18871
-Aruba, 35872
-Botswana, 6255
-Belgium, 472645
-Bosnia and Herzegovina, 169805
-Haiti, 6812
-Iran, 96155
-Republic of Lithuania, 28828
-Mongolia, 811
-Laos, 1702
-Belarus, 8439
-Ukraine, 142503
-Ghana, 35873
-Bermuda, 3872
-Philippines, 1175368
-Palestine, 14947
-Mexico, 199723
-Burkina Faso, 1311
-Nicaragua, 2736
-Finland, 326668
-Monaco, 12827
-Canada, 7598332
-Australia, 7866672
-Syria, 2535
-Thailand, 491918
-Republic of Moldova, 37198
-Portugal, 104538
-Taiwan, 72798
-Switzerland, 250537
-Uruguay, 2664
-Saint Lucia, 364
-Dominica, 428
-Myanmar [Burma], 733
-Ecuador, 271373
-Montenegro, 3803
-Brazil, 660629
-Nigeria, 108075
-Venezuela, 104259
-Uzbekistan, 1903
-Macedonia, 25378
-Romania, 560632
-Kazakhstan, 3146
-Brunei, 39268
-Peru, 106255
-Sierra Leone, 1881
-Azerbaijan, 52086
-Namibia, 1728
-Libya, 1618
-Pakistan, 549402
-Singapore, 512575
-Maldives, 1954
-Morocco, 161388
-Iraq, 26307
-Paraguay, 9278
-Sri Lanka, 75576
-Grenada, 482
-Netherlands, 2225415
-Hashemite Kingdom of Jordan, 32285
-Russia, 189519
-Guadeloupe, 607
-Solomon Islands, 8560
-Guernsey, 2207
-Bahrain, 30150
-Slovenia, 56611
-Luxembourg, 177580
-Djibouti, 532
-Gibraltar, 917
-Isle of Man, 6695
-Malta, 477386
-Croatia, 32441
-Sweden, 1968097
-Curacao, 707
-Oman, 9347
-Uganda, 5034
-South Africa, 129636
-Kuwait, 33666
-Cambodia, 6373
-Qatar, 87467
-Armenia, 11692
-Northern Mariana Islands, 601
-Ethiopia, 4224
-Poland, 415980
-British Virgin Islands, 4323
-Rwanda, 1719
-Chile, 52999
-Kyrgyzstan, 575
-Angola, 1015
-United States, 62565769
-Fiji, 10615
-El Salvador, 5869
-Georgia, 13557
-Afghanistan, 4002
-Bahamas, 30073
-Zambia, 1595
-Greece, 384794
-Mauritius, 45743
-Vietnam, 67189
-Jamaica, 98811
-Argentina, 144944
-Italy, 500691
-Anguilla, 1726
-China, 162296
-Saint Kitts and Nevis, 2834
-India, 2610704
-France, 565364
-Serbia, 115699
 Belize, 11117
-Trinidad and Tobago, 9217
-Bulgaria, 207227
-Hungary, 102717
-Germany, 1930837
-Panama, 38604
-Sudan, 6932
-Japan, 302258
-Ireland, 462416
-Antigua and Barbuda, 21661
-Indonesia, 194555
-Bangladesh, 133987
-Egypt, 107241
-Saint Vincent and the Grenadines, 842
-Republic of Korea, 172774
-Jersey, 6493
-Benin, 316
-Latvia, 19198
+Pakistan, 767173
+New Zealand, 2460872
+United Arab Emirates, 178243
+Qatar, 503026
+El Salvador, 7080
+Denmark, 341312
+Rwanda, 1719
+Nicaragua, 4937
+Serbia, 124219
+American Samoa, 321
+South Africa, 185594
+Canada, 12266446
+Ghana, 59504
+Afghanistan, 5291
+Senegal, 4694
+Macao, 265677
+Sierra Leone, 1881
+Madagascar, 385
+Ecuador, 275400
+Uganda, 26682
+Djibouti, 1707
+Mali, 1864
+Ivory Coast, 1945
+Lesotho, 31820
+Jersey, 7937
+Nigeria, 139152
+Switzerland, 356273
+Netherlands, 2651904
+Isle of Man, 12575
+Malaysia, 497368
+Trinidad and Tobago, 14656
+Grenada, 482
+Philippines, 1735427
+Lebanon, 22790
+Haiti, 6812
+Ethiopia, 37714
+Northern Mariana Islands, 601
+Federated States of Micronesia, 4478
+Cameroon, 6241
+Panama, 44579
+Armenia, 20836
+Indonesia, 276118
+Bahamas, 36559
+Andorra, 13995
+Zambia, 1989
+Albania, 125155
+Saudi Arabia, 265468
+Somalia, 6003
+Tunisia, 30277
+Hashemite Kingdom of Jordan, 45731
+Paraguay, 9745
+Ireland, 749247
+French Polynesia, 418
+Portugal, 214893
+China, 409969
+Libya, 2804
+Luxembourg, 182047
+Argentina, 260281
+Austria, 156554
+Kuwait, 40915
+Fiji, 19146
+Thailand, 650677
+Uzbekistan, 2909
+Faroe Islands, 1536
+Japan, 487583
+Bulgaria, 231989
+Nepal, 56100
+Taiwan, 168239
+Dominica, 4216
+Macedonia, 80982
 Tanzania, 9173
+Saint Lucia, 752
+Gibraltar, 2390
+Australia, 11420870
+Algeria, 112027
+Republic of Moldova, 37728
+Saint Kitts and Nevis, 3184
+Spain, 2316949
+countries_all, 6256
+Turkey, 771476
+Myanmar [Burma], 4573
+Hungary, 195293
+Cuba, 5219
+Chile, 93301
+Guyana, 386
+Réunion, 4482
+Russia, 264146
+Oman, 22998
+British Virgin Islands, 4323
+Azerbaijan, 55846
+Laos, 2484
+Venezuela, 188175
+Mongolia, 1282
+Vanuatu, 418
+São Tomé and Príncipe, 60548
+Croatia, 81999
+Czech Republic, 120711
+Barbados, 10686
+Cambodia, 8808
+Saint Vincent and the Grenadines, 842
+Bahrain, 32325
+Vietnam, 74781
+Yemen, 28716
+Mauritius, 57526
+Benin, 316
+Syria, 116026
+Belarus, 45592
+Iraq, 26307
+Brunei, 39817
+Greece, 606384
+Belgium, 748722
+Estonia, 185706
+Curaçao, 707
+Monaco, 12827
+Costa Rica, 30309
+Bolivia, 19288
+Iran, 146998
+Puerto Rico, 146604
+Anguilla, 1726
+Slovak Republic, 47715
+Sudan, 13528
+Israel, 563673
+Colombia, 164940
+Singapore, 1018323
+Sweden, 2247097
+Burkina Faso, 1311
+Montenegro, 5674
+Maldives, 2727
+Honduras, 28669
+Poland, 609826
+Bhutan, 840
+United Kingdom, 26521284
+Cayman Islands, 922
+Egypt, 149803
+Antigua and Barbuda, 23187
+Mexico, 362512
+Liberia, 6026
+Guernsey, 2821
+Kenya, 40357
+Namibia, 2955
+Brazil, 1031646
+Kazakhstan, 5026
+Guam, 2637
+Iceland, 13137
+Solomon Islands, 9482
+Finland, 570036
+Republic of Korea, 279370
+Germany, 2919061
+Bermuda, 5885
+Slovenia, 74444
+Bangladesh, 155607
+Palestine, 23423
+Romania, 726237
+U.S. Virgin Islands, 2476
+Peru, 123407
+Cyprus, 79621
+Angola, 1015
+Guatemala, 48113
+Jamaica, 130993
+Republic of Lithuania, 34651
+Georgia, 22682
+Ukraine, 212332
+Italy, 1325554
+test, 4964
+Guadeloupe, 2207
+Latvia, 25144
+Dominican Republic, 20896
+Norway, 1764600
+Malta, 843368
+Kyrgyzstan, 6027
+Congo, 8095
+Turks and Caicos Islands, 485
+Hong Kong, 1586342
+Botswana, 8028
+Sri Lanka, 119193
+India, 4238987
+Bosnia and Herzegovina, 178266
+Aruba, 35872
+United States, 96412008
+Uruguay, 22902
+France, 995839
+Morocco, 488476
